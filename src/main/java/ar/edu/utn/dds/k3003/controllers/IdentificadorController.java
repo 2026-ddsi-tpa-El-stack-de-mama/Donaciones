@@ -19,8 +19,6 @@ public class IdentificadorController {
 
     private Fachada fachada;
 
-    //Pongo el Autowired siguiendo el video
-    @Autowired
     public IdentificadorController(Fachada fachada) {
         this.fachada = fachada;
     }
@@ -40,8 +38,8 @@ public class IdentificadorController {
     }
 
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity<IdentificadorDTO> deleteIdentificador(@RequestBody String identificadorID) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<IdentificadorDTO> deleteIdentificador(@PathVariable("id") String identificadorID) {
         IdentificadorDTO identificadorEliminada = fachada.borrarIdentificador(identificadorID);
         return ResponseEntity.ok(identificadorEliminada);
     }

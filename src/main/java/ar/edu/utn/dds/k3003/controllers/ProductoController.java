@@ -19,8 +19,6 @@ public class ProductoController {
 
     private Fachada fachada;
 
-    //Pongo el Autowired siguiendo el video
-    @Autowired
     public ProductoController(Fachada fachada) {
         this.fachada = fachada;
     }
@@ -31,6 +29,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoAgregado);
     }
 
+    /*
     // Opcion 2 utilizando @GetMapping
     @GetMapping
     public ResponseEntity<ProductoDTO> getProductoByID(@RequestParam String productoID){
@@ -38,6 +37,16 @@ public class ProductoController {
                 .status(HttpStatus.OK)
                 .body(this.fachada.buscarProductoPorID(productoID));
     }
+    */
+
+    @GetMapping("/{id}")
+	public ResponseEntity<?> getProductoById(@PathVariable("id") String productoID) {
+		try {
+			return ResponseEntity.ok(fachada.buscarProductoPorID(productoID));
+		} catch (NoSuchElementException ex) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+		}
+	}
 
     @GetMapping
     public ResponseEntity<List <ProductoDTO>> getProductos(){
@@ -47,14 +56,16 @@ public class ProductoController {
     
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<ProductoDTO> putProducto(@RequestParam ProductoDTO nuevoProductoDTO, @RequestParam String id) {
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductoDTO> putProducto(
+            @PathVariable("id") String productoID,
+            @RequestParam ProductoDTO nuevoProductoDTO) {
         ProductoDTO productoCambiado = fachada.putProducto(nuevoProductoDTO, id);
         return ResponseEntity.ok(productoCambiado);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
-    public ResponseEntity<ProductoDTO> deleteProducto(@RequestBody String productoID) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ProductoDTO> deleteProducto(@PathVariable("id") String productoID) {
         ProductoDTO productoEliminada = fachada.borrarProducto(productoID);
         return ResponseEntity.ok(productoEliminada);
     }
