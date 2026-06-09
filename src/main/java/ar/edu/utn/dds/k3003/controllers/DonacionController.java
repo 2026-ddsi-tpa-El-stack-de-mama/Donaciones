@@ -28,7 +28,7 @@ public class DonacionController {
         this.fachada = fachada;
     }
 
-    /*
+    
     //Versión vieja de Post
     // Opcion 1 utilizando @RequestMapping
     @RequestMapping(method = RequestMethod.POST)
@@ -36,20 +36,8 @@ public class DonacionController {
         DonacionDTO donacionAgregada = fachada.registrarDonacion(donacionDTO);
         return ResponseEntity.ok(donacionAgregada);
     }
-    */
-    //Versión nueva de Post
-    @PostMapping
-	public ResponseEntity<?> postDonacion(@RequestBody DonacionDTO donacionDTO) {
-		if (donacionDTO == null) {
-			return ResponseEntity.badRequest().body("Donacion nula");
-		}
-
-		try {
-			return ResponseEntity.status(HttpStatus.CREATED).body(fachada.registrarDonacion(donacionDTO));
-		} catch (RuntimeException ex) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-		}
-	}
+    
+    
     /*
     // Versión vieja de getDonacionByID
     // Opcion 2 utilizando @GetMapping
@@ -63,12 +51,10 @@ public class DonacionController {
 
     // Versión nueva de getDonacionByID
     @GetMapping("/{id}")
-	public ResponseEntity<?> getDonacionById(@PathVariable("id") String donacionID) {
-		try {
-			return ResponseEntity.ok(fachada.buscarDonacionPorID(donacionID));
-		} catch (NoSuchElementException ex) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-		}
+	public ResponseEntity<DonacionDTO> getDonacionById(@PathVariable("id") String donacionID) {
+	    return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.fachada.buscarDonacionPorID(donacionID));
 	}
     //Agregado
     @GetMapping

@@ -40,13 +40,12 @@ public class ProductoController {
     */
 
     @GetMapping("/{id}")
-	public ResponseEntity<?> getProductoById(@PathVariable("id") String productoID) {
-		try {
-			return ResponseEntity.ok(fachada.buscarProductoPorID(productoID));
-		} catch (NoSuchElementException ex) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-		}
-	}
+	public ResponseEntity<ProductoDTO> getProductoByID(@PathVariable("id") String productoID){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(this.fachada.buscarProductoPorID(productoID));
+    }
+	
 
     @GetMapping
     public ResponseEntity<List <ProductoDTO>> getProductos(){
@@ -60,7 +59,7 @@ public class ProductoController {
     public ResponseEntity<ProductoDTO> putProducto(
             @PathVariable("id") String productoID,
             @RequestParam ProductoDTO nuevoProductoDTO) {
-        ProductoDTO productoCambiado = fachada.putProducto(nuevoProductoDTO, id);
+        ProductoDTO productoCambiado = fachada.putProducto(nuevoProductoDTO, productoID);
         return ResponseEntity.ok(productoCambiado);
     }
 
