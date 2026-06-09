@@ -78,6 +78,10 @@ public class Fachada implements FachadaDonaciones {
     this.donacionesRepository = new InMemoryDonacionesRepo();
     this.identificadoresRepository = new InMemoryIdentificadoresRepo();
     this.productosRepository = new InMemoryProductosRepo();
+
+    //Poner datos de prueba
+    this.donacionesRepository.save(new Donacion("dr1", "dep1", "caja", "p1", 1, EstadoDonacionEnum.INGRESADA));
+    this.donacionesRepository.save(new Donacion("dr2", "dep1", "caja", "p1", 4, EstadoDonacionEnum.INGRESADA));
   }
   
 
