@@ -73,6 +73,9 @@ public class Fachada implements FachadaDonaciones {
   
   private FachadaDonadoresYEntidades donadoresYEntidades;
   private FachadaLogistica logistica;
+
+  private Boolean llamadosPredeterminados = Boolean.TRUE;
+
   public Fachada() {
     //Constructor que no reciba parámetros
     this.donacionesRepository = new InMemoryDonacionesRepo();
@@ -92,13 +95,13 @@ public class Fachada implements FachadaDonaciones {
     }
     
     String donadorIDString = donacionDTO.donadorID();
-    if(this.donadoresYEntidades.buscarDonadorPorID(donadorIDString)==null){
+    if(dyEBuscarDonadorPorID(donadorIDString)==null){
       throw new DonadorInvalido("Este no es un donador válido");
     }
     //Muevo habilidadDonar porque el test dice que se está usando puedeDonar 2 veces ??
     //System.out.println("Prueba cantidad de veces que corre");
      // Prueba comentar
-    Boolean habilidadDonar = this.donadoresYEntidades.puedeDonar(donadorIDString);
+    Boolean habilidadDonar = dyEPuedeDonar(donadorIDString);
     if (!(habilidadDonar)){
       throw new DonadorInvalido("Este donador no puede donar");
     };
@@ -107,8 +110,7 @@ public class Fachada implements FachadaDonaciones {
     val donacion = donacionesDataMapper.toDonacion(donacionDTO);
 
     val donacionGuardada = this.donacionesRepository.save(donacion);
-    this.logistica.gestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProductoID(), donacion.getCantidad() );
-
+    logiGestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProductoID(), donacion.getCantidad());
     return donacionesDataMapper.toDonacionDTO(donacionGuardada);
   }
 
@@ -325,7 +327,39 @@ public class Fachada implements FachadaDonaciones {
 
   }
 
-  
+  // Para pruebas devolver resultado predeterminado
+  // --- A futuro debería llamar al microservicio ---
+  private DonadorDTO dyEBuscarDonadorPorID(String donadorIDString){
+    DonadorDTO resultado;
+    if(!llamadosPredeterminados){
+      resultado = this.donadoresYEntidades.buscarDonadorPorID(donadorIDString);
+    }else{
+      resultado = new DonadorDTO("dr1", "Pepe", "Lopez", 20, "gmail.com", "00000000", "suCasa", EstadoDonadorEnum.VERIFICADO, "cate");
+    }
+    return resultado;
+  }
+
+  private Boolean dyEPuedeDonar(String donadorIDString){
+    Boolean resultado;
+    if(!llamadosPredeterminados){
+      resultado = this.donadoresYEntidades.puedeDonar(donadorIDString);
+    }else{
+      resultado = Boolean.TRUE;
+    }
+    
+    return resultado;
+  }
+
+  private void logiGestionarDonacion(String depositoID, String donacionID, String productoID, Integer cantidad){
+    if(!llamadosPredeterminados){
+      this.logistica.gestionarDonacion(depositoID, donacionID, productoID, cantidad);
+    }else{
+
+    }
+  }
+//this.logistica.gestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProductoID(), donacion.getCantidad() );
+
+
 }
 
 
