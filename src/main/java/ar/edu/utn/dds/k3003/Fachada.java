@@ -7,7 +7,6 @@ import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
 import ar.edu.utn.dds.k3003.exceptions.DonadorYaExistenteException;
 import ar.edu.utn.dds.k3003.repositories.DonadoresRepository;
 import ar.edu.utn.dds.k3003.repositories.DonadoresYEntidadesDataMapper;
-import ar.edu.utn.dds.k3003.repositories.CategoriasRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
