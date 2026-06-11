@@ -7,10 +7,7 @@ import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
 import ar.edu.utn.dds.k3003.exceptions.DonadorYaExistenteException;
 import ar.edu.utn.dds.k3003.repositories.DonadoresRepository;
 import ar.edu.utn.dds.k3003.repositories.DonadoresYEntidadesDataMapper;
-
-import ar.edu.utn.dds.k3003.repositories.InMemoryDonadoresRepo;
-import ar.edu.utn.dds.k3003.repositories.InMemoryIdentificadoresRepo;
-import ar.edu.utn.dds.k3003.repositories.InMemoryProductosRepo;
+import ar.edu.utn.dds.k3003.repositories.CategoriasRepository;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -29,7 +26,6 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.IdentificadorDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.TipoIdentificadorEnum;
-import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.QuejaDTO;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonaciones;
 //import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaDonadoresYEntidades;
 import ar.edu.utn.dds.k3003.catedra.fachadas.FachadaLogistica;
@@ -42,11 +38,10 @@ import ar.edu.utn.dds.k3003.exceptions.TransicionNoValida;
 import ar.edu.utn.dds.k3003.model.Donacion;
 //import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
 import ar.edu.utn.dds.k3003.repositories.DonacionesRepository;
+import ar.edu.utn.dds.k3003.repositories.CategoriasRepository;
 //import ar.edu.utn.dds.k3003.repositories.DonadoresRepository;
 import ar.edu.utn.dds.k3003.repositories.DonacionesDataMapper;
 //import ar.edu.utn.dds.k3003.repositories.DonadoresYEntidadesDataMapper;
-import ar.edu.utn.dds.k3003.repositories.InMemoryDonacionesRepo;
-//import ar.edu.utn.dds.k3003.repositories.InMemoryDonadoresRepo;
 
 // ---- A partir de acá es de esta entrega
 import ar.edu.utn.dds.k3003.model.Producto;
@@ -70,12 +65,29 @@ public class Fachada implements FachadaDonaciones {
   private IdentificadoresRepository identificadoresRepository;
   private IdentificadoresDataMapper identificadoresDataMapper =
     new IdentificadoresDataMapper();
+
+  private CategoriasRepository categoriasRepository;
   
   private FachadaDonadoresYEntidades donadoresYEntidades;
   private FachadaLogistica logistica;
 
   private Boolean llamadosPredeterminados = Boolean.TRUE;
 
+  /*
+  @Autowired
+  public Fachada(
+      InsigniaRepository insigniaRepository,
+      MisionRepository misionRepository,
+      DonadorInsigniaRepository donadorInsigniaRepository,
+      DonadorMisionRepository donadorMisionRepository,
+      MisionHistoricoRepository misionHistoricoRepository) {
+    this.insigniaRepository = insigniaRepository;
+    this.misionRepository = misionRepository;
+    this.donadorInsigniaRepository = donadorInsigniaRepository;
+    this.donadorMisionRepository = donadorMisionRepository;
+    this.misionHistoricoRepository = misionHistoricoRepository;
+  }
+   */
   public Fachada() {
     //Constructor que no reciba parámetros
     this.donacionesRepository = new InMemoryDonacionesRepo();

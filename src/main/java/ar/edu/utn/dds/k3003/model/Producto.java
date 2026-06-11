@@ -8,8 +8,10 @@ public class Producto {
     String nombre;
     String descripcion;
     @ManyToOne
-    @JoinColumn(name="id")
+    @JoinColumn(name="categoria_id")
     String categoriaID;
+    @OneToOne
+    @JoinColumn(name="identificador_id")
     String identificadorID;
 
     public Producto(

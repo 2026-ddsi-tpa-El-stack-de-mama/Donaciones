@@ -15,7 +15,7 @@ public class Donacion {
   private String depositoID;
   private String descripcion;
   @ManyToOne
-  @JoinColumn(name="id")
+  @JoinColumn(name="producto_id")
   private String productoID;
   private Integer cantidad;
   @Enumerated(EnumType.STRING)

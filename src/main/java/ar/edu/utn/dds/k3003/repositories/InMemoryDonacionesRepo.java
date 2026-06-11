@@ -1,5 +1,5 @@
 package ar.edu.utn.dds.k3003.repositories;
-
+/*
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.EstadoAsginacionEnum;
 import ar.edu.utn.dds.k3003.model.Donacion;
@@ -50,15 +50,13 @@ public class InMemoryDonacionesRepo implements DonacionesRepository {
     ).toList();
     return donacionesPosibles;
   }
-/*
+
   // Método desesperado, probablemente debería sacarlo después
-  public Donacion cambiarEstadoDonacion(String id, EstadoAsginacionEnum estado){
-    Integer posicion = this.donaciones.indexOf(findById(id));
-    this.donaciones.set(posicion, findById(id).setEstado(estado));
+  //public Donacion cambiarEstadoDonacion(String id, EstadoAsginacionEnum estado){
+  //  Integer posicion = this.donaciones.indexOf(findById(id));
+  //  this.donaciones.set(posicion, findById(id).setEstado(estado));
+  //}
 
-
-  }
-*/
   public Donacion saveSinCambioID(Donacion donacion) {
     this.donaciones.add(donacion);
     return this.findById(donacion.getId()).get();
@@ -68,3 +66,4 @@ public class InMemoryDonacionesRepo implements DonacionesRepository {
     return donaciones;
   }
 }
+*/

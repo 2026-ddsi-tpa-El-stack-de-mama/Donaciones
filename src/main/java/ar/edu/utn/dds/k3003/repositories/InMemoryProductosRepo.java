@@ -1,5 +1,5 @@
 package ar.edu.utn.dds.k3003.repositories;
-
+/*
 import ar.edu.utn.dds.k3003.catedra.dtos.logistica.EstadoAsginacionEnum;
 import ar.edu.utn.dds.k3003.model.Donacion;
 import ar.edu.utn.dds.k3003.model.Producto;
@@ -60,3 +60,4 @@ public class InMemoryProductosRepo implements ProductosRepository {
 
   }
 }
+*/

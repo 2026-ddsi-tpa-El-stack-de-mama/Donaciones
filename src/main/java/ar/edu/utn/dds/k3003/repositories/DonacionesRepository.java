@@ -7,16 +7,22 @@ import java.util.Optional;
 //import java.util.ArrayList;
 import java.util.List;
 
-public interface DonacionesRepository {
-  Optional<Donacion> findById(String id);
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface DonacionesRepository extends JpaRepository<Donacion, String>{
+/*  
+Optional<Donacion> findById(String id);
 
   Donacion save(Donacion donador);
 
-  Donacion deleteById(String id);
+  //Antes devolvía Donacion
+  void deleteById(String id);
 
   List<Donacion> buscarPorDonadorYFechaInicio(String donadorID, LocalDate fecha);
 
-  Donacion saveSinCambioID(Donacion donacion);
+  
 
   List<Donacion> buscarDonaciones();
+  */
+ Donacion saveSinCambioID(Donacion donacion);
 }

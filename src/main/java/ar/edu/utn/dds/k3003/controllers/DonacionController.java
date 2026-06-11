@@ -1,6 +1,6 @@
 package ar.edu.utn.dds.k3003.controllers;
 
-import ar.edu.utn.dds.k3003.Fachada;
+//import ar.edu.utn.dds.k3003.donacionesService;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 
@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 //import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.RequestMethod;
+
 //
 import ar.edu.utn.dds.k3003.model.Donacion;
 //import ar.edu.utn.dds.k3003.services.DonacionService;
@@ -17,15 +17,18 @@ import ar.edu.utn.dds.k3003.model.Donacion;
 import java.time.LocalDate;
 import java.util.List;
 
+import ar.edu.utn.dds.k3003.services.DonacionesService;
+
 
 @RestController
 @RequestMapping("/donaciones")
 public class DonacionController {
 
-    private final Fachada fachada;
+    private final DonacionesService donacionesService;
 
-    public DonacionController(Fachada fachada) {
-        this.fachada = fachada;
+    @Autowired
+    public DonacionController(DonacionesService donacionesService) {
+        this.donacionesService = donacionesService;
     }
 
     
@@ -33,7 +36,7 @@ public class DonacionController {
     // Opcion 1 utilizando @RequestMapping
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<DonacionDTO> postDonacion(@RequestBody DonacionDTO donacionDTO) {
-        DonacionDTO donacionAgregada = fachada.registrarDonacion(donacionDTO);
+        DonacionDTO donacionAgregada = donacionesService.registrarDonacion(donacionDTO);
         return ResponseEntity.ok(donacionAgregada);
     }
     
@@ -45,7 +48,7 @@ public class DonacionController {
     public ResponseEntity<DonacionDTO> getDonacionByID(@RequestParam String donacionID){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(this.fachada.buscarDonacionPorID(donacionID));
+                .body(this.donacionesService.buscarDonacionPorID(donacionID));
     }
     */
 
@@ -54,20 +57,20 @@ public class DonacionController {
 	public ResponseEntity<DonacionDTO> getDonacionById(@PathVariable("id") String donacionID) {
 	    return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(this.fachada.buscarDonacionPorID(donacionID));
+                .body(this.donacionesService.buscarDonacionPorID(donacionID));
 	}
     //Agregado
     @GetMapping
     public ResponseEntity<List <DonacionDTO>> getDonaciones(){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(this.fachada.buscarDonaciones());
+                .body(this.donacionesService.buscarDonaciones());
     
     }
     
     @DeleteMapping("/{id}")
     public ResponseEntity<DonacionDTO> deleteDonacion(@PathVariable("id") String donacionID) {
-        DonacionDTO donacionEliminada = fachada.borrarDonacion(donacionID);
+        DonacionDTO donacionEliminada = donacionesService.borrarDonacion(donacionID);
         return ResponseEntity.ok(donacionEliminada);
     }
 
@@ -75,14 +78,14 @@ public class DonacionController {
     public ResponseEntity<List <DonacionDTO>> buscarPorDonadorYFechaInicio(@RequestParam String donadorID, @RequestParam LocalDate fecha){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(this.fachada.buscarPorDonadorYFechaInicio(donadorID, fecha)) ;
+                .body(this.donacionesService.buscarPorDonadorYFechaInicio(donadorID, fecha)) ;
     }
     
     /*
     // Versión vieja cambiarEstadoDeDonacion
     @RequestMapping(method = RequestMethod.PATCH)
     public ResponseEntity<DonacionDTO> cambiarEstadoDeDonacion(@RequestParam String donacionID, @RequestParam EstadoDonacionEnum estado){
-        DonacionDTO nuevaVersionDonacion = fachada.cambiarEstadoDeDonacion(donacionID, estado);
+        DonacionDTO nuevaVersionDonacion = donacionesService.cambiarEstadoDeDonacion(donacionID, estado);
         return ResponseEntity.ok(nuevaVersionDonacion);
     }
     */
@@ -93,7 +96,7 @@ public class DonacionController {
             @PathVariable("id") String donacionID, 
             @RequestParam EstadoDonacionEnum estado){
 
-        DonacionDTO nuevaVersionDonacion = fachada.cambiarEstadoDeDonacion(donacionID, estado);
+        DonacionDTO nuevaVersionDonacion = donacionesService.cambiarEstadoDeDonacion(donacionID, estado);
         return ResponseEntity.ok(nuevaVersionDonacion);
     }
 
@@ -101,7 +104,7 @@ public class DonacionController {
     //Versión vieja de registrarQuejaEnDonacion 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<DonacionDTO> registrarQuejaEnDonacion(String donacionID, String descripcion){
-        DonacionDTO donacionConQueja = fachada.registrarQuejaEnDonacion(donacionID,descripcion);
+        DonacionDTO donacionConQueja = donacionesService.registrarQuejaEnDonacion(donacionID,descripcion);
         return ResponseEntity.ok(donacionConQueja);
     }
     */
@@ -111,7 +114,7 @@ public class DonacionController {
     public ResponseEntity<DonacionDTO> registrarQuejaEnDonacion(
             @PathVariable("id") String donacionID, 
             @RequestParam String descripcion){
-        DonacionDTO donacionConQueja = fachada.registrarQuejaEnDonacion(donacionID,descripcion);
+        DonacionDTO donacionConQueja = donacionesService.registrarQuejaEnDonacion(donacionID,descripcion);
         return ResponseEntity.ok(donacionConQueja);
     }
 }
