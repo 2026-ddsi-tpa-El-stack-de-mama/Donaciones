@@ -1,6 +1,6 @@
 package ar.edu.utn.dds.k3003.controllers;
 
-import ar.edu.utn.dds.k3003.Fachada;
+//import ar.edu.utn.dds.k3003.identificadoresService;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.IdentificadorDTO;
 
@@ -13,19 +13,22 @@ import org.springframework.web.bind.annotation.*;
 import ar.edu.utn.dds.k3003.model.Identificador;
 import java.util.List;
 
+import ar.edu.utn.dds.k3003.services.IdentificadoresService;
+
+
 @RestController
 @RequestMapping("/identificadores")
 public class IdentificadorController {
 
-    private Fachada fachada;
+    private identificadoresService identificadoresService;
 
-    public IdentificadorController(Fachada fachada) {
-        this.fachada = fachada;
+    public IdentificadorController(identificadoresService identificadoresService) {
+        this.identificadoresService = identificadoresService;
     }
     // Opcion 1 utilizando @RequestMapping
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<IdentificadorDTO> postIdentificador(@RequestBody IdentificadorDTO identificadorDTO) {
-        IdentificadorDTO identificadorAgregado = fachada.agregarIdentificador(identificadorDTO);
+        IdentificadorDTO identificadorAgregado = identificadoresService.agregarIdentificador(identificadorDTO);
         return ResponseEntity.ok(identificadorAgregado);
     }
 
@@ -33,14 +36,14 @@ public class IdentificadorController {
     public ResponseEntity<List <IdentificadorDTO>> getIdentificadores(){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(this.fachada.buscarIdentificadores());
+                .body(this.identificadoresService.buscarIdentificadores());
     
     }
 
 
     @DeleteMapping("/{id}")
     public ResponseEntity<IdentificadorDTO> deleteIdentificador(@PathVariable("id") String identificadorID) {
-        IdentificadorDTO identificadorEliminada = fachada.borrarIdentificador(identificadorID);
+        IdentificadorDTO identificadorEliminada = identificadoresService.borrarIdentificador(identificadorID);
         return ResponseEntity.ok(identificadorEliminada);
     }
 

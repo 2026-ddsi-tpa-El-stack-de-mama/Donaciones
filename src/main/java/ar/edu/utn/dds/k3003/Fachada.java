@@ -12,6 +12,8 @@ import ar.edu.utn.dds.k3003.repositories.CategoriasRepository;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.val;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 // ---- Hasta acá ya venían en el ejemplo ----
 import java.time.LocalDate;
@@ -88,6 +90,8 @@ public class Fachada implements FachadaDonaciones {
     this.misionHistoricoRepository = misionHistoricoRepository;
   }
    */
+  /*
+  //Fachada() viejo 
   public Fachada() {
     //Constructor que no reciba parámetros
     this.donacionesRepository = new InMemoryDonacionesRepo();
@@ -98,6 +102,14 @@ public class Fachada implements FachadaDonaciones {
     this.donacionesRepository.save(new Donacion("dr1", "dep1", "caja", "p1", 1, EstadoDonacionEnum.INGRESADA));
     this.donacionesRepository.save(new Donacion("dr2", "dep1", "caja", "p1", 4, EstadoDonacionEnum.INGRESADA));
   }
+    */
+   @Autowired
+   public Fachada(DonacionesRepository donacionR, ProductosRepository productoR, IdentificadoresRepository identificadorR, CategoriasRepository categoriaR){
+    this.donacionesRepository=donacionR;
+    this.productosRepository = productoR;
+    this.identificadoresRepository = identificadorR;
+    this.categoriasRepository = categoriaR;
+   }
   
 
   @Override
@@ -295,7 +307,7 @@ public class Fachada implements FachadaDonaciones {
   }
 
   public List <DonacionDTO> buscarDonaciones(){
-    List<Donacion> listaDonaciones = this.donacionesRepository.buscarDonaciones();
+    List<Donacion> listaDonaciones = this.donacionesRepository.findAll();
 
     return this.donacionesDataMapper.listToDonacionDTO(listaDonaciones);
   }
@@ -308,7 +320,7 @@ public class Fachada implements FachadaDonaciones {
   }
 
   public List <ProductoDTO> buscarProductos(){
-    List<Producto> listaProductos = this.productosRepository.buscarProductos();
+    List<Producto> listaProductos = this.productosRepository.findAll();
 
     return this.productosDataMapper.listToProductoDTO(listaProductos);
   }
@@ -327,7 +339,7 @@ public class Fachada implements FachadaDonaciones {
   }
 
   public List <IdentificadorDTO> buscarIdentificadores(){
-    List<Identificador> listaIdentificadores = this.identificadoresRepository.buscarIdentificadores();
+    List<Identificador> listaIdentificadores = this.identificadoresRepository.findAll();
 
     return this.identificadoresDataMapper.listToIdentificadorDTO(listaIdentificadores);
   }

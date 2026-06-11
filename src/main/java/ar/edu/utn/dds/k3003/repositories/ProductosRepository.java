@@ -12,16 +12,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProductosRepository extends JpaRepository<Producto, String>{
   /*
-  Optional<Producto> findById(String id);
-
-  Producto save(Producto producto);
-
+  
   void deleteById(String id);
+  */
+
+  Optional<Producto> findById(String id);
 
   Producto saveSinCambioID(Producto Producto);
 
   List<Producto> buscarProductos();
 
   Producto putProducto(Producto producto, String id);
-  */
 }
