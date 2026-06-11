@@ -2,8 +2,14 @@ package ar.edu.utn.dds.k3003.model;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.TipoIdentificadorEnum;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "identificadores")
 public class Identificador {
+    @Id
     String id;
+    @Enumerated(EnumType.STRING)
     TipoIdentificadorEnum tipo;
     String descripcion;
 

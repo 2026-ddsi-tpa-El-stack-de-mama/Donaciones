@@ -3,14 +3,22 @@ package ar.edu.utn.dds.k3003.model;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import java.time.LocalDate;
 
+//Para DB
+import jakarta.persistence.*;
+@Entity
+@Table(name="donaciones")
 public class Donacion {
 
+  @Id
   private String id;
   private String donadorID;
   private String depositoID;
   private String descripcion;
+  @ManyToOne
+  @JoinColumn(name="id")
   private String productoID;
   private Integer cantidad;
+  @Enumerated(EnumType.STRING)
   private EstadoDonacionEnum estado;
   private LocalDate fechaInicio; //Creo que se necesita para buscarPorDonadorYFechaInicio
 

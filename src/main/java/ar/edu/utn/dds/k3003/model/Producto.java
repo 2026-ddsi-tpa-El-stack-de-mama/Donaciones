@@ -1,12 +1,16 @@
 package ar.edu.utn.dds.k3003.model;
-
+import jakarta.persistence.*;
+@Entity
+@Table(name = "productos")
 public class Producto {
+    @Id
     String id;
     String nombre;
     String descripcion;
+    @ManyToOne
+    @JoinColumn(name="id")
     String categoriaID;
     String identificadorID;
-
 
     public Producto(
         String nombre,
