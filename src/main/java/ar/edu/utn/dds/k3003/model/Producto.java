@@ -17,14 +17,20 @@ public class Producto {
     Identificador identificador;
 
     public Producto(
+        String id,
         String nombre,
         String descripcion,
         Categoria categoria,
         Identificador identificador) {
+    this.id=id;
     this.nombre = nombre;
     this.descripcion = descripcion;
     this.categoria = categoria;
     this.identificador = identificador;
+  }
+
+  public Producto(){
+    
   }
   
   public String getId() {

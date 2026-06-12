@@ -19,6 +19,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.CategoriaDTO;
+
 // ---- Estos estaban en el ejemplo anterior y no acá
 // ---- A partir de acá YO puse en la entrega anterior
 
@@ -36,9 +38,11 @@ import ar.edu.utn.dds.k3003.exceptions.DonadorInvalido;
 //import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
 import ar.edu.utn.dds.k3003.exceptions.EstadoNoValido;
 import ar.edu.utn.dds.k3003.exceptions.TransicionNoValida;
+import ar.edu.utn.dds.k3003.model.Categoria;
 import ar.edu.utn.dds.k3003.model.Donacion;
 //import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
 import ar.edu.utn.dds.k3003.repositories.DonacionesRepository;
+import ar.edu.utn.dds.k3003.repositories.CategoriasDataMapper;
 import ar.edu.utn.dds.k3003.repositories.CategoriasRepository;
 //import ar.edu.utn.dds.k3003.repositories.DonadoresRepository;
 import ar.edu.utn.dds.k3003.repositories.DonacionesDataMapper;
@@ -68,6 +72,8 @@ public class Fachada implements FachadaDonaciones {
     new IdentificadoresDataMapper();
 
   private CategoriasRepository categoriasRepository;
+  private CategoriasDataMapper categoriasDataMapper=
+    new CategoriasDataMapper();
   
   private FachadaDonadoresYEntidades donadoresYEntidades;
   private FachadaLogistica logistica;
@@ -141,7 +147,7 @@ public class Fachada implements FachadaDonaciones {
     //Para prueba
     System.out.println("luegoSave");
         System.out.println(donacionGuardada.getId());
-    logiGestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProducto().getId(), donacion.getCantidad());
+    //logiGestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProducto().getId(), donacion.getCantidad());
     return donacionesDataMapper.toDonacionDTO(donacionGuardada);
   }
 
@@ -367,6 +373,31 @@ public class Fachada implements FachadaDonaciones {
 
   }
 
+  public CategoriaDTO agregarCategoria(CategoriaDTO categoriaDTO){
+    if (categoriaDTO.id()!=null && this.categoriasRepository.findById(categoriaDTO.id()).isPresent()) {
+      throw new DonacionYaExistenteException("Ya existe un categoria con ese ID");
+    }
+
+    val categoria = categoriasDataMapper.toCategoria(categoriaDTO);
+    val categoriaGuardado = this.categoriasRepository.save(categoria);
+    return categoriasDataMapper.toCategoriaDTO(categoriaGuardado);
+  }
+
+  public List <CategoriaDTO> buscarCategorias(){
+    List<Categoria> listaCategorias = this.categoriasRepository.findAll();
+
+    return this.categoriasDataMapper.listToCategoriaDTO(listaCategorias);
+  }
+
+  public CategoriaDTO borrarCategoria(String categoriaID){
+    //CategoriaDTO categoria = buscarCategoriaPorID(categoriaID);
+    Categoria categoria=this.categoriasRepository.findById(categoriaID).get();
+    this.categoriasRepository.deleteById(categoriaID);
+    return categoriasDataMapper.toCategoriaDTO(categoria);
+
+  }
+
+  
   // Para pruebas devolver resultado predeterminado
   // --- A futuro debería llamar al microservicio ---
   private DonadorDTO dyEBuscarDonadorPorID(String donadorIDString){

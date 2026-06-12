@@ -14,10 +14,15 @@ public class Identificador {
     String descripcion;
 
     public Identificador(
+        String id,
         TipoIdentificadorEnum tipo,
         String descripcion) {
+    this.id=id;
     this.tipo = tipo;
     this.descripcion = descripcion;
+    }
+    public Identificador(){
+        
     }
     
     public String getId() {

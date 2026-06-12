@@ -42,6 +42,11 @@ public class Donacion {
     this.fechaInicio = LocalDate.now();
   }
 
+  //Pruebo para ver si esto es lo que necesita Hibernate
+  public Donacion(){
+    
+  }
+
   public String getId() {
     return id;
   }

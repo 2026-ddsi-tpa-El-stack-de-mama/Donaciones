@@ -21,6 +21,7 @@ public class IdentificadoresDataMapper {
 */
   public Identificador toIdentificador(IdentificadorDTO identificadorDTO) {
     return new Identificador(
+      identificadorDTO.id(),
         identificadorDTO.tipo(),
         identificadorDTO.descripcion());
   }
