@@ -74,10 +74,10 @@ public class DonacionController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List <DonacionDTO>> buscarPorDonadorYFechaInicio(@RequestParam String donadorID, @RequestParam LocalDate fecha){
+    public ResponseEntity<List <DonacionDTO>> findByDonadorAndFechaInicio(@RequestParam String donadorID, @RequestParam LocalDate fecha){
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(this.fachada.buscarPorDonadorYFechaInicio(donadorID, fecha)) ;
+                .body(this.fachada.findByDonadorAndFechaInicio(donadorID, fecha)) ;
     }
     
     /*

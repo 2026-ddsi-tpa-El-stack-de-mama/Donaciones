@@ -15,8 +15,4 @@ public interface ProductosRepository extends JpaRepository<Producto, String>{
   
   void deleteById(String id);
   */
-
-  Producto saveSinCambioID(Producto Producto);
-
-  Producto putProducto(Producto producto, String id);
 }

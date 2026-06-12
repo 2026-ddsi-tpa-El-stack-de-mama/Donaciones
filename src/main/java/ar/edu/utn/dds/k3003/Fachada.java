@@ -182,14 +182,16 @@ public class Fachada implements FachadaDonaciones {
 
 
   @Override
-  public List<DonacionDTO> buscarPorDonadorYFechaInicio(String donadorID, LocalDate fecha)
+  public List<DonacionDTO> findByDonadorAndFechaInicio(String donadorID, LocalDate fecha)
       throws NoSuchElementException{
     
     if(donadorID=="Inexistente"){
       throw new DonadorInvalido("El ID no es el de un donador válido");
     }
+    List<Donacion> todasDonaciones=this.donacionesRepository.findAll();
     
-    List<Donacion> donacionesValidas = this.donacionesRepository.buscarPorDonadorYFechaInicio( donadorID,  fecha);
+    List<Donacion> donacionesValidas = todasDonaciones.stream()
+          .filter(n-> n.getDonadorID()==donadorID && n.getFechaInicio().isAfter(fecha)).collect(Collectors.toList());
     
     List<DonacionDTO> donacionesPosibles = new ArrayList<>();
     for (int i=0; i < donacionesValidas.size(); i++){
@@ -330,7 +332,9 @@ public class Fachada implements FachadaDonaciones {
 
   public ProductoDTO putProducto(ProductoDTO nuevoProductoDTO, String id){
     Producto nuevoProducto = this.productosDataMapper.toProducto(nuevoProductoDTO);
-    nuevoProducto = this.productosRepository.putProducto(nuevoProducto, id);
+    //Falta comprobar que el producto con ese ID exista
+    nuevoProducto.setId(id);
+    nuevoProducto = this.productosRepository.save(nuevoProducto);
     return this.productosDataMapper.toProductoDTO(nuevoProducto);
   }
 
