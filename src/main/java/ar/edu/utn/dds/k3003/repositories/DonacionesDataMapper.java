@@ -13,7 +13,7 @@ public class DonacionesDataMapper {
         donacion.getDonadorID(),
         donacion.getDepositoID(),
         donacion.getDescripcion(),
-        donacion.getProductoID(),
+        donacion.getProducto(),
         donacion.getCantidad(),
         donacion.getEstado());
   }
@@ -32,7 +32,7 @@ estado;
         donacionDTO.donadorID(),
         donacionDTO.depositoID(),
         donacionDTO.descripcion(),
-        donacionDTO.productoID(),
+        donacionDTO.producto(),
         donacionDTO.cantidad(),
         donacionDTO.estado());
   }

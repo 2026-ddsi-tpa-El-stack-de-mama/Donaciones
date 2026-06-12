@@ -133,7 +133,7 @@ public class Fachada implements FachadaDonaciones {
     val donacion = donacionesDataMapper.toDonacion(donacionDTO);
 
     val donacionGuardada = this.donacionesRepository.save(donacion);
-    logiGestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProductoID(), donacion.getCantidad());
+    logiGestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProducto().getId(), donacion.getCantidad());
     return donacionesDataMapper.toDonacionDTO(donacionGuardada);
   }
 
@@ -170,9 +170,11 @@ public class Fachada implements FachadaDonaciones {
 
 
     donacionFinal.setEstado(estado);
-
+    /*
     this.donacionesRepository.deleteById(donacionID);
     this.donacionesRepository.saveSinCambioID(donacionFinal);
+    */
+   this.donacionesRepository.save(donacionFinal);
 
 
     return donacionesDataMapper.toDonacionDTO(donacionFinal);
@@ -254,11 +256,12 @@ public class Fachada implements FachadaDonaciones {
 
   private Boolean validarProducto(Producto producto){
     Boolean validez = false;
-    IdentificadorDTO suIdentificador = buscarIdentificadorPorID(producto.getIdentificadorID());
-    if (suIdentificador.tipo()==TipoIdentificadorEnum.QR){
+    //IdentificadorDTO suIdentificador = buscarIdentificadorPorID(producto.getIdentificador().getId());
+    Identificador suIdentificador = producto.getIdentificador();
+    if (suIdentificador.getTipo()==TipoIdentificadorEnum.QR){
       validez = contarPalabras(producto.getDescripcion()) >= 3;
     }
-    if (suIdentificador.tipo()==TipoIdentificadorEnum.CODIGODEBARRAS){
+    if (suIdentificador.getTipo()==TipoIdentificadorEnum.CODIGODEBARRAS){
       validez = longitudPar(producto.getNombre());
     }
 
@@ -294,7 +297,7 @@ public class Fachada implements FachadaDonaciones {
     val identificadorGuardado = this.identificadoresRepository.save(identificador);
     return identificadoresDataMapper.toIdentificadorDTO(identificadorGuardado);
   }
-
+/*
   @Override
   public IdentificadorDTO buscarIdentificadorPorID(String identificadorID) throws NoSuchElementException{
     val identificadorOptional = this.identificadoresRepository.findById(identificadorID);
@@ -304,6 +307,7 @@ public class Fachada implements FachadaDonaciones {
     val identificadorFinal = identificadorOptional.get();
     return identificadoresDataMapper.toIdentificadorDTO(identificadorFinal);
   }
+  */
 
   public List <DonacionDTO> buscarDonaciones(){
     List<Donacion> listaDonaciones = this.donacionesRepository.findAll();
@@ -344,9 +348,10 @@ public class Fachada implements FachadaDonaciones {
   }
 
   public IdentificadorDTO borrarIdentificador(String identificadorID){
-    IdentificadorDTO identificador = buscarIdentificadorPorID(identificadorID);
+    //IdentificadorDTO identificador = buscarIdentificadorPorID(identificadorID);
+    Identificador identificador=this.identificadoresRepository.findById(identificadorID).get();
     this.identificadoresRepository.deleteById(identificadorID);
-    return identificador;
+    return identificadoresDataMapper.toIdentificadorDTO(identificador);
 
   }
 

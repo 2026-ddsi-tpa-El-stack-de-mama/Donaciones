@@ -24,6 +24,5 @@ Optional<Donacion> findById(String id);
 
   List<Donacion> buscarDonaciones();
   */
- Donacion saveSinCambioID(Donacion donacion);
  List<Donacion> buscarPorDonadorYFechaInicio(String donadorID, LocalDate fecha);
 }

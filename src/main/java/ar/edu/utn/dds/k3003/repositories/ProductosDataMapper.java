@@ -12,8 +12,8 @@ public class ProductosDataMapper {
         //producto.getDonadorID(),
         producto.getNombre(),
         producto.getDescripcion(),
-        producto.getCategoriaID(),
-        producto.getIdentificadorID());
+        producto.getCategoria(),
+        producto.getIdentificador());
   }
 /*
 // REFERENCIA

@@ -1,5 +1,7 @@
 package ar.edu.utn.dds.k3003.model;
 import jakarta.persistence.*;
+import ar.edu.utn.dds.k3003.model.Identificador;
+import ar.edu.utn.dds.k3003.model.Categoria;
 @Entity
 @Table(name = "productos")
 public class Producto {
@@ -9,20 +11,20 @@ public class Producto {
     String descripcion;
     @ManyToOne
     @JoinColumn(name="categoria_id")
-    String categoriaID;
+    Categoria categoria;
     @OneToOne
     @JoinColumn(name="identificador_id")
-    String identificadorID;
+    Identificador identificador;
 
     public Producto(
         String nombre,
         String descripcion,
-        String categoriaID,
-        String identificadorID) {
+        Categoria categoria,
+        Identificador identificador) {
     this.nombre = nombre;
     this.descripcion = descripcion;
-    this.categoriaID = categoriaID;
-    this.identificadorID = identificadorID;
+    this.categoria = categoria;
+    this.identificador = identificador;
   }
   
   public String getId() {
@@ -41,11 +43,11 @@ public class Producto {
     return descripcion;
   }
 
-  public String getCategoriaID() {
-    return categoriaID;
+  public Categoria getCategoria() {
+    return categoria;
   }
 
-  public String getIdentificadorID(){
-    return identificadorID;
+  public Identificador getIdentificador(){
+    return identificador;
   }
 }
