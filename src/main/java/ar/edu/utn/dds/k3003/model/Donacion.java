@@ -10,6 +10,8 @@ import jakarta.persistence.*;
 public class Donacion {
 
   @Id
+  //TODO: el id deberia ser autogenerado
+  //@GeneratedValue(strategy = GenerationType.)
   private String id;
   private String donadorID;
   private String depositoID;
@@ -23,12 +25,14 @@ public class Donacion {
   private LocalDate fechaInicio; //Creo que se necesita para buscarPorDonadorYFechaInicio
 
   public Donacion(
+    String id,
       String donadorID,
       String depositoID,
       String descripcion,
       Producto producto,
       Integer cantidad,
       EstadoDonacionEnum estado) {
+    this.id=id;
     this.donadorID = donadorID;
     this.depositoID = depositoID;
     this.descripcion = descripcion;

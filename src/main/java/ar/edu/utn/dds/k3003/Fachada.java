@@ -113,6 +113,9 @@ public class Fachada implements FachadaDonaciones {
 
   @Override
   public DonacionDTO registrarDonacion(DonacionDTO donacionDTO){
+    //Para prueba
+    System.out.println("Dentro registrar");
+        System.out.println(donacionDTO);
     if (this.donacionesRepository.findById(donacionDTO.id()).isPresent()) {
       throw new DonacionYaExistenteException("Ya existe una donacion con ese ID");
     }
@@ -131,8 +134,13 @@ public class Fachada implements FachadaDonaciones {
     
     
     val donacion = donacionesDataMapper.toDonacion(donacionDTO);
-
+    //Para prueba
+    System.out.println("luegoDataMapper");
+        System.out.println(donacion.getId());
     val donacionGuardada = this.donacionesRepository.save(donacion);
+    //Para prueba
+    System.out.println("luegoSave");
+        System.out.println(donacionGuardada.getId());
     logiGestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProducto().getId(), donacion.getCantidad());
     return donacionesDataMapper.toDonacionDTO(donacionGuardada);
   }

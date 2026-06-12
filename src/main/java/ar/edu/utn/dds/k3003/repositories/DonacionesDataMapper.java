@@ -29,6 +29,8 @@ estado;
 */
   public Donacion toDonacion(DonacionDTO donacionDTO) {
     return new Donacion(
+  
+      donacionDTO.id(),
         donacionDTO.donadorID(),
         donacionDTO.depositoID(),
         donacionDTO.descripcion(),
