@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 import ar.edu.utn.dds.k3003.model.Producto;
+import ar.edu.utn.dds.k3003.model.Categoria;
+import ar.edu.utn.dds.k3003.model.Identificador;
 
 public class ProductosDataMapper {
       public ProductoDTO toProductoDTO(Producto producto) {
@@ -12,8 +14,8 @@ public class ProductosDataMapper {
         //producto.getDonadorID(),
         producto.getNombre(),
         producto.getDescripcion(),
-        producto.getCategoria(),
-        producto.getIdentificador());
+        producto.getCategoria().getId(),
+        producto.getIdentificador().getId());
   }
 /*
 // REFERENCIA
@@ -23,13 +25,13 @@ public class ProductosDataMapper {
     String categoriaID;
     String identificadorID;
 */
-  public Producto toProducto(ProductoDTO productoDTO) {
+  public Producto toProducto(ProductoDTO productoDTO, Categoria categoria, Identificador identificador) {
     return new Producto(
       productoDTO.id(),
         productoDTO.nombre(),
         productoDTO.descripcion(),
-        productoDTO.categoriaID(),
-        productoDTO.identificadorID());
+        categoria,
+        identificador);
   }
 
   public List <ProductoDTO> listToProductoDTO(List<Producto> lista){

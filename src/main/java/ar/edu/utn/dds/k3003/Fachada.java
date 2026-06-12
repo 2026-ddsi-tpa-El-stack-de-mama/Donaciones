@@ -139,7 +139,15 @@ public class Fachada implements FachadaDonaciones {
     };
     
     
-    val donacion = donacionesDataMapper.toDonacion(donacionDTO);
+    val donacion = new Donacion(
+      donacionDTO.id(),
+      donacionDTO.donadorID(),
+      donacionDTO.depositoID(),
+      donacionDTO.descripcion(),
+      this.productosRepository.findById(donacionDTO.productoID()).get(),
+      donacionDTO.cantidad(),
+      donacionDTO.estado()
+    );
     //Para prueba
     System.out.println("luegoDataMapper");
         System.out.println(donacion.getId());
@@ -147,7 +155,7 @@ public class Fachada implements FachadaDonaciones {
     //Para prueba
     System.out.println("luegoSave");
         System.out.println(donacionGuardada.getId());
-    //logiGestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProducto().getId(), donacion.getCantidad());
+    logiGestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProducto().getId(), donacion.getCantidad());
     return donacionesDataMapper.toDonacionDTO(donacionGuardada);
   }
 
@@ -259,12 +267,24 @@ public class Fachada implements FachadaDonaciones {
 
   @Override
   public ProductoDTO agregarProducto(ProductoDTO productoDTO){
+    System.out.println("Dentro agregar");
     if (productoDTO.id()!=null && this.productosRepository.findById(productoDTO.id()).isPresent()) {
       throw new DonacionYaExistenteException("Ya existe un producto con ese ID");
     }
-    val producto = productosDataMapper.toProducto(productoDTO);
-
+    System.out.println("Previo categoria");
+    Categoria suCategoria = categoriasRepository.findById(productoDTO.categoriaID()).get();
+    System.out.println("Previo identificador");
+    System.out.println(productoDTO.identificadorID());
+    Identificador suIdentificador = identificadoresRepository.findById(productoDTO.identificadorID()).get();
+    System.out.println("Previo mappear");
+    val producto = productosDataMapper.toProducto(productoDTO, suCategoria, suIdentificador);
+    System.out.println("Previo validar");
+    System.out.println(productoDTO);
     validarProducto(producto);
+    System.out.println("Luego validar");
+    System.out.println(productoDTO);
+
+    
 
     val productoGuardado = this.productosRepository.save(producto);
     return productosDataMapper.toProductoDTO(productoGuardado);
@@ -345,7 +365,8 @@ public class Fachada implements FachadaDonaciones {
   }
 
   public ProductoDTO putProducto(ProductoDTO nuevoProductoDTO, String id){
-    Producto nuevoProducto = this.productosDataMapper.toProducto(nuevoProductoDTO);
+    Producto nuevoProducto = this.productosDataMapper.toProducto(nuevoProductoDTO, categoriasRepository.findById(nuevoProductoDTO.categoriaID()).get(), identificadoresRepository.findById(nuevoProductoDTO.identificadorID()).get());
+;
     //Falta comprobar que el producto con ese ID exista
     nuevoProducto.setId(id);
     nuevoProducto = this.productosRepository.save(nuevoProducto);

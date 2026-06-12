@@ -2,7 +2,7 @@ package ar.edu.utn.dds.k3003.repositories;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.model.Donacion;
-
+import ar.edu.utn.dds.k3003.model.Producto;
 import java.util.List;
 import java.util.ArrayList;
 public class DonacionesDataMapper {
@@ -13,7 +13,7 @@ public class DonacionesDataMapper {
         donacion.getDonadorID(),
         donacion.getDepositoID(),
         donacion.getDescripcion(),
-        donacion.getProducto(),
+        donacion.getProducto().getId(),
         donacion.getCantidad(),
         donacion.getEstado());
   }
@@ -27,14 +27,14 @@ productoID;
 cantidad;
 estado;
 */
-  public Donacion toDonacion(DonacionDTO donacionDTO) {
+  public Donacion toDonacion(DonacionDTO donacionDTO, Producto producto) {
     return new Donacion(
   
       donacionDTO.id(),
         donacionDTO.donadorID(),
         donacionDTO.depositoID(),
         donacionDTO.descripcion(),
-        donacionDTO.producto(),
+        producto,
         donacionDTO.cantidad(),
         donacionDTO.estado());
   }
