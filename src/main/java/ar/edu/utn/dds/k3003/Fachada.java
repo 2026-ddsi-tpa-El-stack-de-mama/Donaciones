@@ -358,6 +358,10 @@ public class Fachada implements FachadaDonaciones {
 
   }
 
+  public void borrarDonaciones(){
+    this.donacionesRepository.deleteAll();
+  }
+
   public List <ProductoDTO> buscarProductos(){
     List<Producto> listaProductos = this.productosRepository.findAll();
 

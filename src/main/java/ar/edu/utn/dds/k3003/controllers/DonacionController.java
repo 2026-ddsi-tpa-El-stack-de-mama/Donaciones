@@ -35,6 +35,8 @@ public class DonacionController {
     // Opcion 1 utilizando @RequestMapping
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<DonacionDTO> postDonacion(@RequestBody DonacionDTO donacionDTO) {
+        //Para prueba
+        System.out.println(donacionDTO);
         DonacionDTO donacionAgregada = fachada.registrarDonacion(donacionDTO);
         return ResponseEntity.ok(donacionAgregada);
     }
@@ -66,7 +68,12 @@ public class DonacionController {
                 .body(this.fachada.buscarDonaciones());
     
     }
-    
+    @DeleteMapping
+    public ResponseEntity<Integer> deleteDonaciones() {
+        fachada.borrarDonaciones();
+        return ResponseEntity.ok(200);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<DonacionDTO> deleteDonacion(@PathVariable("id") String donacionID) {
         DonacionDTO donacionEliminada = fachada.borrarDonacion(donacionID);
