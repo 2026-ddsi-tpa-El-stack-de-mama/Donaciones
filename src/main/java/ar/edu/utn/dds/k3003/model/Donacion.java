@@ -12,6 +12,7 @@ public class Donacion {
   @Id
   //TODO: el id deberia ser autogenerado
   //@GeneratedValue(strategy = GenerationType.)
+  @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
   private String donadorID;
   private String depositoID;

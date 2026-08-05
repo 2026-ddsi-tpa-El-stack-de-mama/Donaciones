@@ -8,6 +8,7 @@ import jakarta.persistence.*;
 @Table(name = "identificadores")
 public class Identificador {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
     @Enumerated(EnumType.STRING)
     TipoIdentificadorEnum tipo;

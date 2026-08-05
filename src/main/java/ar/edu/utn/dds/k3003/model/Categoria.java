@@ -8,6 +8,7 @@ import lombok.val;
 @Table(name = "categorias")
 public class Categoria {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
     String nombre;
     String descripcion;
@@ -51,7 +52,7 @@ public class Categoria {
     }
 
     public String getSubcategoriaID(){
-        return this.id;
+        return this.subcategoriaID;
     }
     public void setSubcategoriaID(String subcategoriaID){
         this.subcategoriaID=subcategoriaID;

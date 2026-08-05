@@ -6,6 +6,7 @@ import ar.edu.utn.dds.k3003.model.Categoria;
 @Table(name = "productos")
 public class Producto {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     String id;
     String nombre;
     String descripcion;
