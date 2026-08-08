@@ -223,8 +223,14 @@ public class Fachada implements FachadaDonaciones {
   public List<DonacionDTO> findByDonadorAndFechaInicio(String donadorID, LocalDate fecha)
       throws NoSuchElementException{
     
+        //Poner que le pregunte a Donadores y Entidades
+    /*
     if(donadorID=="Inexistente"){
       throw new DonadorInvalido("El ID no es el de un donador válido");
+    }
+    */
+    if(dyEBuscarDonadorPorID(donadorID)==null ){
+      throw new DonadorInvalido("Este no es un donador válido");
     }
     List<Donacion> todasDonaciones=this.donacionesRepository.findAll();
     

@@ -87,11 +87,16 @@ public class DonacionController {
         return ResponseEntity.ok(donacionEliminada);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List <DonacionDTO>> findByDonadorAndFechaInicio(@RequestParam String donadorID, @RequestParam LocalDate fecha){
+    @GetMapping("/search/{id}/{date}")
+    public ResponseEntity<?> findByDonadorAndFechaInicio(@PathVariable("id") String donadorID, @PathVariable("date") LocalDate fecha){
+        String requestId = MDC.get("request_id");
+        try{
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(this.fachada.findByDonadorAndFechaInicio(donadorID, fecha)) ;
+        }catch(RuntimeException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("X-Request-Id", requestId).body(ex.getMessage());
+        }
     }
     
     /*
@@ -105,12 +110,16 @@ public class DonacionController {
 
     // Versión nueva cambiarEstadoDeDonacion
     @PatchMapping("/{id}/estado")
-    public ResponseEntity<DonacionDTO> cambiarEstadoDeDonacion(
+    public ResponseEntity<?> cambiarEstadoDeDonacion(
             @PathVariable("id") String donacionID, 
             @RequestParam EstadoDonacionEnum estado){
-
+        String requestId = MDC.get("request_id");
+        try{
         DonacionDTO nuevaVersionDonacion = fachada.cambiarEstadoDeDonacion(donacionID, estado);
         return ResponseEntity.ok(nuevaVersionDonacion);
+        }catch(RuntimeException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("X-Request-Id", requestId).body(ex.getMessage());
+        }
     }
 
     /*
