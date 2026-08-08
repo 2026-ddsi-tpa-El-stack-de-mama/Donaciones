@@ -233,15 +233,15 @@ public class Fachada implements FachadaDonaciones {
       throw new DonadorInvalido("Este no es un donador válido");
     }
     List<Donacion> todasDonaciones=this.donacionesRepository.findAll();
-    
-    List<Donacion> donacionesValidas = todasDonaciones.stream()
-          .filter(n-> n.getDonadorID()==donadorID && n.getFechaInicio().isAfter(fecha)).collect(Collectors.toList());
-    
+   List<Donacion> donacionesValidas =  todasDonaciones.stream()
+          .filter(n-> n.getDonadorID().equals(donadorID)&& n.getFechaInicio().isAfter(fecha)).collect(Collectors.toList());
+      
+   //
     List<DonacionDTO> donacionesPosibles = new ArrayList<>();
     for (int i=0; i < donacionesValidas.size(); i++){
       donacionesPosibles.add(donacionesDataMapper.toDonacionDTO(donacionesValidas.get(i)));
+
     }
-   
     return donacionesPosibles;
 
   }
