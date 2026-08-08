@@ -234,7 +234,7 @@ public class Fachada implements FachadaDonaciones {
     }
     List<Donacion> todasDonaciones=this.donacionesRepository.findAll();
    List<Donacion> donacionesValidas =  todasDonaciones.stream()
-          .filter(n-> n.getDonadorID().equals(donadorID)&& n.getFechaInicio().isAfter(fecha)).collect(Collectors.toList());
+          .filter(n-> n.getDonadorID().equals(donadorID)&& (n.getFechaInicio().isAfter(fecha)||n.getFechaInicio().equals(fecha))).collect(Collectors.toList());
       
    //
     List<DonacionDTO> donacionesPosibles = new ArrayList<>();
@@ -251,7 +251,7 @@ public class Fachada implements FachadaDonaciones {
     val donacionFinal = buscarDonacionPorIDInterna(donacionID);
     QuejaDTO queja;
     queja = new QuejaDTO(null, donacionID, donacionFinal.getDonadorID(), null, descripcion);
-    this.donadoresYEntidades.agregarQueja(queja.id(),queja);
+    this.donadoresYEntidades.agregarQueja(donacionFinal.getDonadorID(),queja);
     //public record QuejaDTO(String id, String donacionID, String donadorID, LocalDate fecha, String descripcion) {}
     donacionFinal.setDescripcion(descripcion);
     return cambiarEstadoDeDonacion( donacionID, EstadoDonacionEnum.CONQUEJA);

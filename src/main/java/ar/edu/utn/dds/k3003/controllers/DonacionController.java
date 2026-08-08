@@ -132,11 +132,16 @@ public class DonacionController {
     */
 
     //Versión nueva de registrarQuejaEnDonacion
-    @PostMapping("{id}/queja")
-    public ResponseEntity<DonacionDTO> registrarQuejaEnDonacion(
+    @PostMapping("/{id}/queja")
+    public ResponseEntity<?> registrarQuejaEnDonacion(
             @PathVariable("id") String donacionID, 
-            @RequestParam String descripcion){
+            @RequestBody String descripcion){
+        String requestId = MDC.get("request_id");
+        try{
         DonacionDTO donacionConQueja = fachada.registrarQuejaEnDonacion(donacionID,descripcion);
         return ResponseEntity.ok(donacionConQueja);
+        }catch(RuntimeException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("X-Request-Id", requestId).body(ex.getMessage());
+        }
     }
 }
