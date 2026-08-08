@@ -17,6 +17,8 @@ import ar.edu.utn.dds.k3003.model.Donacion;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.slf4j.MDC;
+
 
 
 @RestController
@@ -34,11 +36,16 @@ public class DonacionController {
     //Versión vieja de Post
     // Opcion 1 utilizando @RequestMapping
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<DonacionDTO> postDonacion(@RequestBody DonacionDTO donacionDTO) {
+    public ResponseEntity<?> postDonacion(@RequestBody DonacionDTO donacionDTO) {
         //Para prueba
+        String requestId = MDC.get("request_id");
+        try{
         System.out.println(donacionDTO);
         DonacionDTO donacionAgregada = fachada.registrarDonacion(donacionDTO);
         return ResponseEntity.ok(donacionAgregada);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("X-Request-Id", requestId).body(ex.getMessage());
+        }
     }
     
     

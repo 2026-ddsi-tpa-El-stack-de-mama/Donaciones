@@ -138,7 +138,7 @@ public class Fachada implements FachadaDonaciones {
     //Para prueba
     System.out.println("Dentro registrar");
         System.out.println(donacionDTO);
-    if (this.donacionesRepository.findById(donacionDTO.id()).isPresent()) {
+    if (donacionDTO.id()!=null && this.donacionesRepository.findById(donacionDTO.id()).isPresent()) {
       throw new DonacionYaExistenteException("Ya existe una donacion con ese ID");
     }
     
