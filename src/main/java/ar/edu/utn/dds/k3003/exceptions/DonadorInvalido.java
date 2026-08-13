@@ -1,7 +1,10 @@
 package ar.edu.utn.dds.k3003.exceptions;
 
-public class DonadorInvalido extends RuntimeException {
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
+
+public class DonadorInvalido extends ResponseStatusException {
   public DonadorInvalido(String mensaje) {
-    super(mensaje);
+    super(HttpStatus.BAD_REQUEST,mensaje);
   }
 }

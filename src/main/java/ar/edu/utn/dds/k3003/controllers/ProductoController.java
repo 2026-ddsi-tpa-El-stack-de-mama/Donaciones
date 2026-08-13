@@ -4,6 +4,7 @@ import ar.edu.utn.dds.k3003.Fachada;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
 
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -42,10 +43,15 @@ public class ProductoController {
     */
 
     @GetMapping("/{id}")
-	public ResponseEntity<ProductoDTO> getProductoByID(@PathVariable("id") String productoID){
+	public ResponseEntity<?> getProductoByID(@PathVariable("id") String productoID){
+        String requestId = MDC.get("request_id");
+        try{
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(this.fachada.buscarProductoPorID(productoID));
+        }catch(RuntimeException ex){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("X-Request-Id", requestId).body(ex.getMessage());
+        }
     }
 	
 

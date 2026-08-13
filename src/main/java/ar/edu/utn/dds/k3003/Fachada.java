@@ -42,6 +42,7 @@ import ar.edu.utn.dds.k3003.exceptions.DonadorInvalido;
 //import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
 import ar.edu.utn.dds.k3003.exceptions.EstadoNoValido;
 import ar.edu.utn.dds.k3003.exceptions.TransicionNoValida;
+import ar.edu.utn.dds.k3003.exceptions.ProductoNoEncontradoException;
 import ar.edu.utn.dds.k3003.model.Categoria;
 import ar.edu.utn.dds.k3003.model.Donacion;
 //import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
@@ -339,7 +340,7 @@ public class Fachada implements FachadaDonaciones {
   public ProductoDTO buscarProductoPorID(String productoID) throws NoSuchElementException{
     val productoOptional = this.productosRepository.findById(productoID);
     if (productoOptional.isEmpty()) {
-      throw new DonacionNoEncontradaException("No existe un producto con ese ID");
+      throw new ProductoNoEncontradoException("No existe un producto con ese ID");
     }
     val productoFinal = productoOptional.get();
     return productosDataMapper.toProductoDTO(productoFinal);
