@@ -50,7 +50,10 @@ public class ProductoController {
                 .status(HttpStatus.OK)
                 .body(this.fachada.buscarProductoPorID(productoID));
         }catch(RuntimeException ex){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("X-Request-Id", requestId).body(ex.getMessage());
+            if (ex.getMessage() != null && ex.getMessage().toLowerCase().contains("no existe")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).header("X-Request-Id", requestId).body(ex.getMessage());
+            }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("X-Request-Id", requestId).body(ex.getMessage());
         }
     }
 	

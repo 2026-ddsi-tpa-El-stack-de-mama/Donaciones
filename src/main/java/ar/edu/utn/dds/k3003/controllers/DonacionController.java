@@ -62,10 +62,18 @@ public class DonacionController {
 
     // Versión nueva de getDonacionByID
     @GetMapping("/{id}")
-	public ResponseEntity<DonacionDTO> getDonacionById(@PathVariable("id") String donacionID) {
-	    return ResponseEntity
+	public ResponseEntity<?> getDonacionById(@PathVariable("id") String donacionID) {
+	    String requestId = MDC.get("request_id");
+        try{
+            return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(this.fachada.buscarDonacionPorID(donacionID));
+        }catch(RuntimeException ex){
+            if (ex.getMessage() != null && ex.getMessage().toLowerCase().contains("no existe")) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).header("X-Request-Id", requestId).body(ex.getMessage());
+            }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("X-Request-Id", requestId).body(ex.getMessage());
+        }
 	}
     //Agregado
     @GetMapping
@@ -138,8 +146,8 @@ public class DonacionController {
             @RequestBody String descripcion){
         String requestId = MDC.get("request_id");
         try{
-        DonacionDTO donacionConQueja = fachada.registrarQuejaEnDonacion(donacionID,descripcion);
-        return ResponseEntity.ok(donacionConQueja);
+            DonacionDTO donacionConQueja = fachada.registrarQuejaEnDonacion(donacionID,descripcion);
+            return ResponseEntity.ok(donacionConQueja);
         }catch(RuntimeException ex){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("X-Request-Id", requestId).body(ex.getMessage());
         }
