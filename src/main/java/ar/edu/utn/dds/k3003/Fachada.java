@@ -45,6 +45,7 @@ import ar.edu.utn.dds.k3003.exceptions.TransicionNoValida;
 import ar.edu.utn.dds.k3003.exceptions.ProductoNoEncontradoException;
 import ar.edu.utn.dds.k3003.model.Categoria;
 import ar.edu.utn.dds.k3003.model.Donacion;
+import ar.edu.utn.dds.k3003.model.DonacionHist;
 //import ar.edu.utn.dds.k3003.exceptions.DonadorNoEncontradoException;
 import ar.edu.utn.dds.k3003.repositories.DonacionesRepository;
 import ar.edu.utn.dds.k3003.repositories.CategoriasDataMapper;
@@ -52,7 +53,7 @@ import ar.edu.utn.dds.k3003.repositories.CategoriasRepository;
 //import ar.edu.utn.dds.k3003.repositories.DonadoresRepository;
 import ar.edu.utn.dds.k3003.repositories.DonacionesDataMapper;
 //import ar.edu.utn.dds.k3003.repositories.DonadoresYEntidadesDataMapper;
-
+import ar.edu.utn.dds.k3003.repositories.DonacionesHistRepository;
 // ---- A partir de acá es de esta entrega
 import ar.edu.utn.dds.k3003.model.Producto;
 import java.util.StringTokenizer;
@@ -79,6 +80,8 @@ public class Fachada implements FachadaDonaciones {
   private CategoriasRepository categoriasRepository;
   private CategoriasDataMapper categoriasDataMapper=
     new CategoriasDataMapper();
+
+  private DonacionesHistRepository donacionesHistRepository;
   
   //private FachadaDonadoresYEntidades donadoresYEntidades;
   //private FachadaLogistica logistica;
@@ -122,6 +125,7 @@ public class Fachada implements FachadaDonaciones {
         ProductosRepository productoR, 
         IdentificadoresRepository identificadorR, 
         CategoriasRepository categoriaR,
+        DonacionesHistRepository donacionHistR,
         DonadoresYEntidadesClient donadoresYEClient,
         LogisticaClient logisticaClient)
     {
@@ -129,6 +133,7 @@ public class Fachada implements FachadaDonaciones {
     this.productosRepository = productoR;
     this.identificadoresRepository = identificadorR;
     this.categoriasRepository = categoriaR;
+    this.donacionesHistRepository = donacionHistR;
     this.donadoresYEntidades = donadoresYEClient;
     this.logistica=logisticaClient;
    }
@@ -173,6 +178,26 @@ public class Fachada implements FachadaDonaciones {
     System.out.println("luegoSave");
         System.out.println(donacionGuardada.getId());
     logiGestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProducto().getId(), donacion.getCantidad());
+    val donacionHist = new DonacionHist(
+          null,donacion.getId(),
+          donacion.getDonadorID(),
+          donacion.getDepositoID(),
+          donacion.getDescripcion(),
+          donacion.getProducto().getId(),
+          donacion.getCantidad(),
+          donacion.getEstado(),
+          donacion.getFechaInicio());
+    /*
+          String id,
+      String donacionID,
+      String donadorID,
+      String depositoID,
+      String descripcion,
+      String productoID,
+      Integer cantidad,
+      EstadoDonacionEnum estado,
+      LocalDate fechaInicio */
+    this.donacionesHistRepository.save(donacionHist);
     return donacionesDataMapper.toDonacionDTO(donacionGuardada);
   }
 
@@ -214,7 +239,26 @@ public class Fachada implements FachadaDonaciones {
     this.donacionesRepository.saveSinCambioID(donacionFinal);
     */
    this.donacionesRepository.save(donacionFinal);
-
+       val donacionHist = new DonacionHist(
+          null,donacionFinal.getId(),
+          donacionFinal.getDonadorID(),
+          donacionFinal.getDepositoID(),
+          donacionFinal.getDescripcion(),
+          donacionFinal.getProducto().getId(),
+          donacionFinal.getCantidad(),
+          donacionFinal.getEstado(),
+          donacionFinal.getFechaInicio());
+    /*
+          String id,
+      String donacionID,
+      String donadorID,
+      String depositoID,
+      String descripcion,
+      String productoID,
+      Integer cantidad,
+      EstadoDonacionEnum estado,
+      LocalDate fechaInicio */
+    this.donacionesHistRepository.save(donacionHist);
 
     return donacionesDataMapper.toDonacionDTO(donacionFinal);
   }
@@ -482,6 +526,12 @@ public class Fachada implements FachadaDonaciones {
     }else{
 
     }
+  }
+
+    public List <DonacionHist> buscarDonacionesHist(){
+    List<DonacionHist> listaDonacionesHist = this.donacionesHistRepository.findAll();
+
+    return listaDonacionesHist;
   }
 //this.logistica.gestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProductoID(), donacion.getCantidad() );
 
