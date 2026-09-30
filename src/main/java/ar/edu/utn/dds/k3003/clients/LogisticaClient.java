@@ -12,7 +12,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.logistica.PaqueteDTO;
 
 
 //Después poner bien el url
-@FeignClient(name="logistica", url="https://logistica-jc94.onrender.com")
+@FeignClient(name="logistica", url="${FACHADA_LOG}")
 public interface LogisticaClient {
     @PostMapping("/depositos/{id}/donacion")
     String postDonacion(@PathVariable String id, @RequestBody PaqueteDTO paquete);

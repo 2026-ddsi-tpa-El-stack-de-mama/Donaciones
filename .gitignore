@@ -161,6 +161,10 @@ modules.xml
 # Log file
 *.log
 
+# Info oculta
+.env
+.env.*
+
 # BlueJ files
 *.ctxt
 

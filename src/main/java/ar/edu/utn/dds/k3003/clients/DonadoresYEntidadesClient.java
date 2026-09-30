@@ -13,7 +13,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donadoresYEntidades.QuejaDTO;
 
 
 //Después poner bien el url
-@FeignClient(name="donadoresYEntidades", url="https://donadores-y-entidades-ngp3.onrender.com")
+@FeignClient(name="donadoresYEntidades", url="${FACHADA_DYE}")
 public interface DonadoresYEntidadesClient {
     
     @GetMapping("/donadores/{id}/puede-donar")

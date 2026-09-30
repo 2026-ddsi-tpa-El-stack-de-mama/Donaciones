@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.val;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 // ---- Hasta acá ya venían en el ejemplo ----
@@ -88,6 +91,8 @@ public class Fachada implements FachadaDonaciones {
 
   private DonadoresYEntidadesClient donadoresYEntidades;
   private LogisticaClient logistica;
+
+  private static final Logger logger = LoggerFactory.getLogger(Fachada.class);
 
   private Boolean llamadosPredeterminados = Boolean.FALSE;
 
@@ -174,6 +179,8 @@ public class Fachada implements FachadaDonaciones {
     System.out.println("luegoDataMapper");
         System.out.println(donacion.getId());
     val donacionGuardada = this.donacionesRepository.save(donacion);
+    //Prueba de que anden los logs
+    logger.info("Se registra la donacion: {}", donacionGuardada.getId());
     //Para prueba
     System.out.println("luegoSave");
         System.out.println(donacionGuardada.getId());
@@ -197,6 +204,7 @@ public class Fachada implements FachadaDonaciones {
       Integer cantidad,
       EstadoDonacionEnum estado,
       LocalDate fechaInicio */
+    
     this.donacionesHistRepository.save(donacionHist);
     return donacionesDataMapper.toDonacionDTO(donacionGuardada);
   }
@@ -354,6 +362,8 @@ public class Fachada implements FachadaDonaciones {
     
 
     val productoGuardado = this.productosRepository.save(producto);
+        //Prueba de que anden los logs
+    logger.info("Se agrega el producto: {}", productoGuardado.getId());
     return productosDataMapper.toProductoDTO(productoGuardado);
   }
 
@@ -398,6 +408,9 @@ public class Fachada implements FachadaDonaciones {
 
     val identificador = identificadoresDataMapper.toIdentificador(identificadorDTO);
     val identificadorGuardado = this.identificadoresRepository.save(identificador);
+    
+    //Prueba de que anden los logs
+    logger.info("Se agrega el identificador: {}", identificadorGuardado.getId());
     return identificadoresDataMapper.toIdentificadorDTO(identificadorGuardado);
   }
 /*
@@ -472,6 +485,9 @@ public class Fachada implements FachadaDonaciones {
 
     val categoria = categoriasDataMapper.toCategoria(categoriaDTO);
     val categoriaGuardado = this.categoriasRepository.save(categoria);
+    
+        //Prueba de que anden los logs
+    logger.info("Se agrega la categoria: {}", categoriaGuardado.getId());
     return categoriasDataMapper.toCategoriaDTO(categoriaGuardado);
   }
 
