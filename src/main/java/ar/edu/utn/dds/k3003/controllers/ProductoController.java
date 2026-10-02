@@ -27,9 +27,16 @@ public class ProductoController {
     }
     // Opcion 1 utilizando @RequestMapping
     @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<ProductoDTO> postProducto(@RequestBody ProductoDTO productoDTO) {
+    public ResponseEntity<?> postProducto(@RequestBody ProductoDTO productoDTO) {
+   //Para prueba
+        String requestId = MDC.get("request_id");
+        try{
+        System.out.println(productoDTO);
         ProductoDTO productoAgregado = fachada.agregarProducto(productoDTO);
         return ResponseEntity.ok(productoAgregado);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).header("X-Request-Id", requestId).body(ex.getMessage());
+        }
     }
 
     /*
