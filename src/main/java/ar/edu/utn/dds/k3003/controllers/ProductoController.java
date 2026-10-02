@@ -69,7 +69,7 @@ public class ProductoController {
     @PutMapping("/{id}")
     public ResponseEntity<ProductoDTO> putProducto(
             @PathVariable("id") String productoID,
-            @RequestParam ProductoDTO nuevoProductoDTO) {
+            @RequestBody ProductoDTO nuevoProductoDTO) {
         ProductoDTO productoCambiado = fachada.putProducto(nuevoProductoDTO, productoID);
         return ResponseEntity.ok(productoCambiado);
     }

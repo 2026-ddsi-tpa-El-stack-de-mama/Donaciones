@@ -85,9 +85,6 @@ public class Fachada implements FachadaDonaciones {
     new CategoriasDataMapper();
 
   private DonacionesHistRepository donacionesHistRepository;
-  
-  //private FachadaDonadoresYEntidades donadoresYEntidades;
-  //private FachadaLogistica logistica;
 
   private DonadoresYEntidadesClient donadoresYEntidades;
   private LogisticaClient logistica;
@@ -95,35 +92,6 @@ public class Fachada implements FachadaDonaciones {
   private static final Logger logger = LoggerFactory.getLogger(Fachada.class);
 
   private Boolean llamadosPredeterminados = Boolean.FALSE;
-
-  /*
-  @Autowired
-  public Fachada(
-      InsigniaRepository insigniaRepository,
-      MisionRepository misionRepository,
-      DonadorInsigniaRepository donadorInsigniaRepository,
-      DonadorMisionRepository donadorMisionRepository,
-      MisionHistoricoRepository misionHistoricoRepository) {
-    this.insigniaRepository = insigniaRepository;
-    this.misionRepository = misionRepository;
-    this.donadorInsigniaRepository = donadorInsigniaRepository;
-    this.donadorMisionRepository = donadorMisionRepository;
-    this.misionHistoricoRepository = misionHistoricoRepository;
-  }
-   */
-  /*
-  //Fachada() viejo 
-  public Fachada() {
-    //Constructor que no reciba parámetros
-    this.donacionesRepository = new InMemoryDonacionesRepo();
-    this.identificadoresRepository = new InMemoryIdentificadoresRepo();
-    this.productosRepository = new InMemoryProductosRepo();
-
-    //Poner datos de prueba
-    this.donacionesRepository.save(new Donacion("dr1", "dep1", "caja", "p1", 1, EstadoDonacionEnum.INGRESADA));
-    this.donacionesRepository.save(new Donacion("dr2", "dep1", "caja", "p1", 4, EstadoDonacionEnum.INGRESADA));
-  }
-    */
    @Autowired
    public Fachada(
         DonacionesRepository donacionR, 
@@ -146,22 +114,24 @@ public class Fachada implements FachadaDonaciones {
 
   @Override
   public DonacionDTO registrarDonacion(DonacionDTO donacionDTO){
-    //Para prueba
-    System.out.println("Dentro registrar");
-        System.out.println(donacionDTO);
+    // LOG: entro
+    String requestId = MDC.get("request_id");
+    logger.info("[{}] Fachada.registrarDonacion - entrada: {}", requestId, donacionDTO);
+    
     if (donacionDTO.id()!=null && this.donacionesRepository.findById(donacionDTO.id()).isPresent()) {
+      logger.info("[{}] Fachada.registrarDonacion - Ya existe una donacion con ese ID", requestId);
       throw new DonacionYaExistenteException("Ya existe una donacion con ese ID");
     }
     
     String donadorIDString = donacionDTO.donadorID();
     if(dyEBuscarDonadorPorID(donadorIDString)==null){
+      logger.info("[{}] Fachada.registrarDonacion - Este no es un donador válido", requestId);
       throw new DonadorInvalido("Este no es un donador válido");
     }
-    //Muevo habilidadDonar porque el test dice que se está usando puedeDonar 2 veces ??
-    //System.out.println("Prueba cantidad de veces que corre");
-     // Prueba comentar
+    
     Boolean habilidadDonar = dyEPuedeDonar(donadorIDString);
     if (!(habilidadDonar)){
+      logger.warn("[{}] Fachada.registrarDonacion - Este donador no puede donar", requestId);
       throw new DonadorInvalido("Este donador no puede donar");
     };
     
@@ -176,15 +146,11 @@ public class Fachada implements FachadaDonaciones {
       donacionDTO.estado()
     );
     //Para prueba
-    System.out.println("luegoDataMapper");
-        System.out.println(donacion.getId());
     val donacionGuardada = this.donacionesRepository.save(donacion);
     //Prueba de que anden los logs
-    logger.info("Se registra la donacion: {}", donacionGuardada.getId());
-    //Para prueba
-    System.out.println("luegoSave");
-        System.out.println(donacionGuardada.getId());
+    logger.info("[{}] Fachada.registrarDonacion - Se registra la donacion {}", requestId, donacionGuardada);
     logiGestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProducto().getId(), donacion.getCantidad());
+    logger.info("[{}] Fachada.registrarDonacion - Se manda donacion {} a Logistica", requestId, donacionGuardada.getId());
     val donacionHist = new DonacionHist(
           null,donacion.getId(),
           donacion.getDonadorID(),
@@ -194,16 +160,6 @@ public class Fachada implements FachadaDonaciones {
           donacion.getCantidad(),
           donacion.getEstado(),
           donacion.getFechaInicio());
-    /*
-          String id,
-      String donacionID,
-      String donadorID,
-      String depositoID,
-      String descripcion,
-      String productoID,
-      Integer cantidad,
-      EstadoDonacionEnum estado,
-      LocalDate fechaInicio */
     
     this.donacionesHistRepository.save(donacionHist);
     return donacionesDataMapper.toDonacionDTO(donacionGuardada);
@@ -230,6 +186,8 @@ public class Fachada implements FachadaDonaciones {
   @Override
   public DonacionDTO cambiarEstadoDeDonacion(String donacionID, EstadoDonacionEnum estado)
       throws NoSuchElementException{
+    String requestId = MDC.get("request_id");
+    logger.info("[{}] Fachada.cambiarEstadoDeDonacion - entrada: {} , {}", requestId, donacionID, estado);
     val donacionFinal = buscarDonacionPorIDInterna(donacionID);
     if (estado==null){
       throw new EstadoNoValido("Se intentó poner el estado en null");
@@ -237,15 +195,12 @@ public class Fachada implements FachadaDonaciones {
     //Se agrega validación de transición para entrega 2
 
     if (!validarTransicion(donacionFinal.getEstado(), estado)){
+      logger.info("[{}] Fachada.cambiarEstadoDeDonacion - Se intentó hacer una transición de estados inválida {}", requestId, estado);
       throw new TransicionNoValida("Se intentó hacer una transición de estados inválida");
     }
 
 
     donacionFinal.setEstado(estado);
-    /*
-    this.donacionesRepository.deleteById(donacionID);
-    this.donacionesRepository.saveSinCambioID(donacionFinal);
-    */
    this.donacionesRepository.save(donacionFinal);
        val donacionHist = new DonacionHist(
           null,donacionFinal.getId(),
@@ -256,18 +211,8 @@ public class Fachada implements FachadaDonaciones {
           donacionFinal.getCantidad(),
           donacionFinal.getEstado(),
           donacionFinal.getFechaInicio());
-    /*
-          String id,
-      String donacionID,
-      String donadorID,
-      String depositoID,
-      String descripcion,
-      String productoID,
-      Integer cantidad,
-      EstadoDonacionEnum estado,
-      LocalDate fechaInicio */
     this.donacionesHistRepository.save(donacionHist);
-
+    logger.info("[{}] Fachada.cambiarEstadoDeDonacion - Se cambió correctamente el estado {}", requestId, estado);
     return donacionesDataMapper.toDonacionDTO(donacionFinal);
   }
 
@@ -301,12 +246,14 @@ public class Fachada implements FachadaDonaciones {
 
   @Override
   public DonacionDTO registrarQuejaEnDonacion(String donacionID, String descripcion){
+    String requestId = MDC.get("request_id");
+    logger.info("[{}] Fachada.registrarQuejaEnDonacion - entrada: {} , {}", requestId, donacionID, descripcion);
     val donacionFinal = buscarDonacionPorIDInterna(donacionID);
     QuejaDTO queja;
     queja = new QuejaDTO(null, donacionID, donacionFinal.getDonadorID(), null, descripcion);
     this.donadoresYEntidades.agregarQueja(donacionFinal.getDonadorID(),queja);
-    //public record QuejaDTO(String id, String donacionID, String donadorID, LocalDate fecha, String descripcion) {}
     donacionFinal.setDescripcion(descripcion);
+    logger.info("[{}] Fachada.registrarQuejaEnDonacion - Se manda a cambiar estado", requestId);
     return cambiarEstadoDeDonacion( donacionID, EstadoDonacionEnum.CONQUEJA);
   }
 
@@ -337,39 +284,29 @@ public class Fachada implements FachadaDonaciones {
 
   }
 
-  // Recordatorio
-  // ProductoDTO( String id, String nombre, String descripcion, String categoriaID, String identificadorID) {}
-
   @Override
   public ProductoDTO agregarProducto(ProductoDTO productoDTO){
-    System.out.println("Dentro agregar");
+    String requestId = MDC.get("request_id");
+    logger.info("[{}] Fachada.agregarProducto - entrada: {}", requestId, productoDTO);
+    
     if (productoDTO.id()!=null && this.productosRepository.findById(productoDTO.id()).isPresent()) {
       throw new DonacionYaExistenteException("Ya existe un producto con ese ID");
     }
-    System.out.println("Previo categoria");
     Categoria suCategoria = categoriasRepository.findById(productoDTO.categoriaID()).get();
-    System.out.println("Previo identificador");
-    System.out.println(productoDTO.identificadorID());
     Identificador suIdentificador = identificadoresRepository.findById(productoDTO.identificadorID()).get();
-    System.out.println("Previo mappear");
     val producto = productosDataMapper.toProducto(productoDTO, suCategoria, suIdentificador);
-    System.out.println("Previo validar");
-    System.out.println(productoDTO);
-    validarProducto(producto);
-    System.out.println("Luego validar");
-    System.out.println(productoDTO);
-
-    
-
+    if (!validarProducto(producto)){
+      logger.info("[{}] Fachada.agregarProducto - El producto no cumple con las reglas", requestId);
+      throw new TransicionNoValida("El producto no cumple con las reglas");
+    }
     val productoGuardado = this.productosRepository.save(producto);
         //Prueba de que anden los logs
-    logger.info("Se agrega el producto: {}", productoGuardado.getId());
+    logger.info("[{}] Fachada.agregarProducto - Se agrega el producto: {}", requestId, productoGuardado);
     return productosDataMapper.toProductoDTO(productoGuardado);
   }
 
   private Boolean validarProducto(Producto producto){
     Boolean validez = false;
-    //IdentificadorDTO suIdentificador = buscarIdentificadorPorID(producto.getIdentificador().getId());
     Identificador suIdentificador = producto.getIdentificador();
     if (suIdentificador.getTipo()==TipoIdentificadorEnum.QR){
       validez = contarPalabras(producto.getDescripcion()) >= 3;
@@ -402,6 +339,9 @@ public class Fachada implements FachadaDonaciones {
 
   @Override
   public IdentificadorDTO agregarIdentificador(IdentificadorDTO identificadorDTO){
+    String requestId = MDC.get("request_id");
+    logger.info("[{}] Fachada.agregarIdentificador - entrada: {}", requestId, identificadorDTO);
+    
     if (identificadorDTO.id()!=null && this.identificadoresRepository.findById(identificadorDTO.id()).isPresent()) {
       throw new DonacionYaExistenteException("Ya existe un identificador con ese ID");
     }
@@ -409,8 +349,7 @@ public class Fachada implements FachadaDonaciones {
     val identificador = identificadoresDataMapper.toIdentificador(identificadorDTO);
     val identificadorGuardado = this.identificadoresRepository.save(identificador);
     
-    //Prueba de que anden los logs
-    logger.info("Se agrega el identificador: {}", identificadorGuardado.getId());
+    logger.info("[{}] Fachada.agregarIdentificador - Se agrega el identificador: {}", requestId, identificador);
     return identificadoresDataMapper.toIdentificadorDTO(identificadorGuardado);
   }
 /*
@@ -432,8 +371,12 @@ public class Fachada implements FachadaDonaciones {
   }
 
   public DonacionDTO borrarDonacion(String donacionID){
+    String requestId = MDC.get("request_id");
+    logger.info("[{}] Fachada.borrarDonacion - entrada: {}", requestId, donacionID);
     DonacionDTO donacion = buscarDonacionPorID(donacionID);
     this.donacionesRepository.deleteById(donacionID);
+    
+    logger.info("[{}] Fachada.borrarDonacion - Se borro la donacion {}", requestId, donacionID);
     return donacion;
 
   }
@@ -449,17 +392,27 @@ public class Fachada implements FachadaDonaciones {
   }
 
   public ProductoDTO putProducto(ProductoDTO nuevoProductoDTO, String id){
-    Producto nuevoProducto = this.productosDataMapper.toProducto(nuevoProductoDTO, categoriasRepository.findById(nuevoProductoDTO.categoriaID()).get(), identificadoresRepository.findById(nuevoProductoDTO.identificadorID()).get());
-;
-    //Falta comprobar que el producto con ese ID exista
+    String requestId = MDC.get("request_id");
+    logger.info("[{}] Fachada.putProducto - entrada: {} , {}", requestId, nuevoProductoDTO, id);
+    buscarProductoPorID(id);
+    logger.info("[{}] Fachada.putProducto - id de producto valido", requestId);
+    Producto nuevoProducto = this.productosDataMapper.toProducto(
+          nuevoProductoDTO, 
+          categoriasRepository.findById(nuevoProductoDTO.categoriaID()).get(), 
+          identificadoresRepository.findById(nuevoProductoDTO.identificadorID()).get());
     nuevoProducto.setId(id);
     nuevoProducto = this.productosRepository.save(nuevoProducto);
+    logger.info("[{}] Fachada.putProducto - se cambio el producto {} a {}", requestId, id, nuevoProducto);
     return this.productosDataMapper.toProductoDTO(nuevoProducto);
   }
 
   public ProductoDTO borrarProducto(String productoID){
+    String requestId = MDC.get("request_id");
+    logger.info("[{}] Fachada.borrarProducto - entrada: {}", requestId, productoID);
     ProductoDTO producto = buscarProductoPorID(productoID);
+    logger.info("[{}] Fachada.borrarProducto - id de producto valido", requestId);
     this.productosRepository.deleteById(productoID);
+    logger.info("[{}] Fachada.borrarProducto - se borro el producto {}", requestId, productoID);
     return producto;
 
   }
@@ -471,14 +424,25 @@ public class Fachada implements FachadaDonaciones {
   }
 
   public IdentificadorDTO borrarIdentificador(String identificadorID){
-    //IdentificadorDTO identificador = buscarIdentificadorPorID(identificadorID);
+    String requestId = MDC.get("request_id");
+    logger.info("[{}] Fachada.borrarIdentificador - entrada: {}", requestId, identificadorID);
     Identificador identificador=this.identificadoresRepository.findById(identificadorID).get();
+    if ( identificador == null){
+      logger.info("[{}] Fachada.borrarIdentificador - id de identificadorID NO encontrado", requestId);
+      throw new ProductoNoEncontradoException("id de identificadorID NO encontrado");
+    }
+    
+    logger.info("[{}] Fachada.borrarIdentificador - id de identificador valido", requestId);
     this.identificadoresRepository.deleteById(identificadorID);
+    logger.info("[{}] Fachada.borrarIdentificador - se borro el identificador {}", requestId, identificadorID);
     return identificadoresDataMapper.toIdentificadorDTO(identificador);
 
   }
 
   public CategoriaDTO agregarCategoria(CategoriaDTO categoriaDTO){
+    String requestId = MDC.get("request_id");
+    logger.info("[{}] Fachada.agregarCategoria - entrada: {}", requestId, categoriaDTO);
+    
     if (categoriaDTO.id()!=null && this.categoriasRepository.findById(categoriaDTO.id()).isPresent()) {
       throw new DonacionYaExistenteException("Ya existe un categoria con ese ID");
     }
@@ -486,8 +450,7 @@ public class Fachada implements FachadaDonaciones {
     val categoria = categoriasDataMapper.toCategoria(categoriaDTO);
     val categoriaGuardado = this.categoriasRepository.save(categoria);
     
-        //Prueba de que anden los logs
-    logger.info("Se agrega la categoria: {}", categoriaGuardado.getId());
+    logger.info("[{}] Fachada.agregarCategoria - se agrego la categoria {}", requestId, categoriaDTO);
     return categoriasDataMapper.toCategoriaDTO(categoriaGuardado);
   }
 
