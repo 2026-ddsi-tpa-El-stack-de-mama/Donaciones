@@ -308,10 +308,10 @@ public class Fachada implements FachadaDonaciones {
   private Boolean validarProducto(Producto producto){
     Boolean validez = false;
     Identificador suIdentificador = producto.getIdentificador();
-    if (suIdentificador.getTipo()==TipoIdentificadorEnum.QR){
+    if (suIdentificador.getTipo()==TipoIdentificadorEnum.CODIGODEBARRAS){
       validez = contarPalabras(producto.getDescripcion()) >= 3;
     }
-    if (suIdentificador.getTipo()==TipoIdentificadorEnum.CODIGODEBARRAS){
+    if (suIdentificador.getTipo()==TipoIdentificadorEnum.QR){
       validez = longitudPar(producto.getNombre());
     }
 
