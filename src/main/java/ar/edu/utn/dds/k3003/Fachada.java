@@ -66,6 +66,8 @@ import ar.edu.utn.dds.k3003.repositories.ProductosDataMapper;
 import ar.edu.utn.dds.k3003.repositories.ProductosRepository;
 import ar.edu.utn.dds.k3003.model.Identificador;
 
+import io.micrometer.core.instrument.MeterRegistry;
+
 @Service
 public class Fachada implements FachadaDonaciones {
   private DonacionesRepository donacionesRepository;
@@ -89,6 +91,8 @@ public class Fachada implements FachadaDonaciones {
   private DonadoresYEntidadesClient donadoresYEntidades;
   private LogisticaClient logistica;
 
+  private final MeterRegistry metricas;
+
   private static final Logger logger = LoggerFactory.getLogger(Fachada.class);
 
   private Boolean llamadosPredeterminados = Boolean.FALSE;
@@ -100,7 +104,8 @@ public class Fachada implements FachadaDonaciones {
         CategoriasRepository categoriaR,
         DonacionesHistRepository donacionHistR,
         DonadoresYEntidadesClient donadoresYEClient,
-        LogisticaClient logisticaClient)
+        LogisticaClient logisticaClient,
+        MeterRegistry metricas)
     {
     this.donacionesRepository=donacionR;
     this.productosRepository = productoR;
@@ -109,6 +114,7 @@ public class Fachada implements FachadaDonaciones {
     this.donacionesHistRepository = donacionHistR;
     this.donadoresYEntidades = donadoresYEClient;
     this.logistica=logisticaClient;
+    this.metricas = metricas;
    }
   
 
@@ -162,6 +168,7 @@ public class Fachada implements FachadaDonaciones {
           donacion.getFechaInicio());
     
     this.donacionesHistRepository.save(donacionHist);
+    metricas.counter("donaciones.creadas").increment();
     return donacionesDataMapper.toDonacionDTO(donacionGuardada);
   }
 
@@ -253,6 +260,7 @@ public class Fachada implements FachadaDonaciones {
     queja = new QuejaDTO(null, donacionID, donacionFinal.getDonadorID(), null, descripcion);
     this.donadoresYEntidades.agregarQueja(donacionFinal.getDonadorID(),queja);
     donacionFinal.setDescripcion(descripcion);
+    metricas.counter("donaciones.quejas").increment();
     logger.info("[{}] Fachada.registrarQuejaEnDonacion - Se manda a cambiar estado", requestId);
     return cambiarEstadoDeDonacion( donacionID, EstadoDonacionEnum.CONQUEJA);
   }
@@ -275,6 +283,7 @@ public class Fachada implements FachadaDonaciones {
     // INGRESADA -> ACEPTADA
     if (estadoFinal == EstadoDonacionEnum.ACEPTADA ){
       validez = estadoInicial == EstadoDonacionEnum.INGRESADA;
+      metricas.counter("donaciones.aceptadas").increment();
     }
     // ACEPTADA -> CONQUEJA
     if (estadoFinal == EstadoDonacionEnum.CONQUEJA){
@@ -375,7 +384,7 @@ public class Fachada implements FachadaDonaciones {
     logger.info("[{}] Fachada.borrarDonacion - entrada: {}", requestId, donacionID);
     DonacionDTO donacion = buscarDonacionPorID(donacionID);
     this.donacionesRepository.deleteById(donacionID);
-    
+    metricas.counter("donaciones.borrardas").increment();
     logger.info("[{}] Fachada.borrarDonacion - Se borro la donacion {}", requestId, donacionID);
     return donacion;
 
