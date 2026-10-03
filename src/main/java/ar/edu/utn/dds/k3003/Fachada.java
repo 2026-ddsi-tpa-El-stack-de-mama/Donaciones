@@ -149,7 +149,7 @@ public class Fachada implements FachadaDonaciones {
       donacionDTO.descripcion(),
       this.productosRepository.findById(donacionDTO.productoID()).get(),
       donacionDTO.cantidad(),
-      donacionDTO.estado()
+      EstadoDonacionEnum.INGRESADA
     );
     //Para prueba
     val donacionGuardada = this.donacionesRepository.save(donacion);
