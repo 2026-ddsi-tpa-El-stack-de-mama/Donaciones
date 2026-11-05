@@ -521,6 +521,13 @@ public class Fachada implements FachadaDonaciones {
 
     return listaDonacionesHist;
   }
+  public List<DonacionHist> buscarDonacionesHistPorID(String donacionID){
+    List<DonacionHist> listaDonacionesHist = this.donacionesHistRepository.findAll();
+    List<DonacionHist> donacionesValidas =  listaDonacionesHist.stream()
+          .filter(n-> n.getDonacionID().equals(donacionID)).collect(Collectors.toList());
+      
+    return donacionesValidas;
+  }
 //this.logistica.gestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProductoID(), donacion.getCantidad() );
 
 

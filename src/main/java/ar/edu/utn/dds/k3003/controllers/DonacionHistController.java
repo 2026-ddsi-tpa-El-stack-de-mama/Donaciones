@@ -37,4 +37,9 @@ public class DonacionHistController {
                 .body(this.fachada.buscarDonacionesHist());
     
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<List<DonacionHist>> getDonacionesHistPorID(@PathVariable("id") String donacionID){
+        return ResponseEntity.status(HttpStatus.OK).body(this.fachada.buscarDonacionesHistPorID(donacionID));
+    }
 }
