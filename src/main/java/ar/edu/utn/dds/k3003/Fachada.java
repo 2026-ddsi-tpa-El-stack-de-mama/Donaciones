@@ -29,6 +29,7 @@ import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.CategoriaDTO;
 // ---- A partir de acá YO puse en la entrega anterior
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionDTO;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionHistDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.IdentificadorDTO;
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.ProductoDTO;
@@ -516,17 +517,34 @@ public class Fachada implements FachadaDonaciones {
     }
   }
 
-    public List <DonacionHist> buscarDonacionesHist(){
+  public List <DonacionHistDTO> buscarDonacionesHist(){
     List<DonacionHist> listaDonacionesHist = this.donacionesHistRepository.findAll();
 
-    return listaDonacionesHist;
+    List<DonacionHistDTO> donacionesHistDTO = new ArrayList<>();
+    for (int i=0; i < listaDonacionesHist.size(); i++){
+      donacionesHistDTO.add( this.toDonacionHistDTO( listaDonacionesHist.get(i) ) ) ;
+
+    }
+    return donacionesHistDTO;
   }
-  public List<DonacionHist> buscarDonacionesHistPorID(String donacionID){
+
+  private DonacionHistDTO toDonacionHistDTO(DonacionHist donacionHist){
+    return new DonacionHistDTO( donacionHist.getId(), donacionHist.getDonacionID(), donacionHist.getDonadorID(), 
+                                donacionHist.getDepositoID(), donacionHist.getDepositoID(), donacionHist.getProductoID(), 
+                                donacionHist.getCantidad(), donacionHist.getEstado(), donacionHist.getFechaInicio());
+  }
+
+  public List<DonacionHistDTO> buscarDonacionesHistPorID(String donacionID){
     List<DonacionHist> listaDonacionesHist = this.donacionesHistRepository.findAll();
     List<DonacionHist> donacionesValidas =  listaDonacionesHist.stream()
           .filter(n-> n.getDonacionID().equals(donacionID)).collect(Collectors.toList());
       
-    return donacionesValidas;
+    List<DonacionHistDTO> donacionesHistDTO = new ArrayList<>();
+    for (int i=0; i < donacionesValidas.size(); i++){
+      donacionesHistDTO.add( this.toDonacionHistDTO( donacionesValidas.get(i) ) ) ;
+
+    }
+    return donacionesHistDTO;
   }
 //this.logistica.gestionarDonacion(donacion.getDepositoID(), donacion.getId(), donacion.getProductoID(), donacion.getCantidad() );
 

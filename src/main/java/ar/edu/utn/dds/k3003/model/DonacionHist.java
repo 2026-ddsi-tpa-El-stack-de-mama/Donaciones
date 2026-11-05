@@ -2,7 +2,6 @@ package ar.edu.utn.dds.k3003.model;
 
 import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.EstadoDonacionEnum;
 import java.time.LocalDate;
-import ar.edu.utn.dds.k3003.model.Producto;
 //Para DB
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

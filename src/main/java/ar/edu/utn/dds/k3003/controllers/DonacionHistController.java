@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 //
-import ar.edu.utn.dds.k3003.model.DonacionHist;
+import ar.edu.utn.dds.k3003.catedra.dtos.donaciones.DonacionHistDTO;
 //import ar.edu.utn.dds.k3003.services.DonacionService;
 
 import java.time.LocalDate;
@@ -31,7 +31,7 @@ public class DonacionHistController {
     }
 
     @GetMapping
-    public ResponseEntity<List <DonacionHist>> getDonacionesHist(){
+    public ResponseEntity<List <DonacionHistDTO>> getDonacionesHist(){
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(this.fachada.buscarDonacionesHist());
@@ -39,7 +39,7 @@ public class DonacionHistController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<List<DonacionHist>> getDonacionesHistPorID(@PathVariable("id") String donacionID){
+    public ResponseEntity<List<DonacionHistDTO>> getDonacionesHistPorID(@PathVariable("id") String donacionID){
         return ResponseEntity.status(HttpStatus.OK).body(this.fachada.buscarDonacionesHistPorID(donacionID));
     }
 }
