@@ -1,5 +1,5 @@
 package ar.edu.utn.dds.k3003.eventos;
-/*
+
 //import ar.edu.utn.dds.k3003.config.MetricasNegocio;
 import ar.edu.utn.dds.k3003.observabilidad.TraceContext;
 import ar.edu.utn.dds.k3003.queue.EventoQueue;
@@ -11,15 +11,12 @@ import com.rabbitmq.client.MessageProperties;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.amqp.core.MessageBuilderSupport;
-import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-
 
 
  //Publica eventos en la cola del modelo de lectura.
@@ -40,19 +37,19 @@ public class PublicadorEventos {
 
   private final RabbitTemplate rabbitTemplate;
   private final ObjectMapper objectMapper;
-  private final MetricasNegocio metricas;
+  //private final MetricasNegocio metricas;
   private final String cola;
   private final boolean habilitado;
 
   public PublicadorEventos(
       RabbitTemplate rabbitTemplate,
       ObjectMapper objectMapper,
-      MetricasNegocio metricas,
+      //MetricasNegocio metricas,
       @Value("${spring.rabbitmq.host:}") String host,
       @Value("${eventos.rabbit.cola:}") String cola) {
     this.rabbitTemplate = rabbitTemplate;
     this.objectMapper = objectMapper;
-    this.metricas = metricas;
+    //this.metricas = metricas;
     this.cola = cola;
     this.habilitado = !host.isBlank() && !cola.isBlank();
     if (!habilitado) {
@@ -67,10 +64,10 @@ public class PublicadorEventos {
     }
     try {
       rabbitTemplate.send(EXCHANGE_POR_DEFECTO, cola, aMensaje(evento));
-      metricas.eventoPublicado(evento.tipoEvento(), "ok");
+      //metricas.eventoPublicado(evento.tipoEvento(), "ok");
       logger.info("Evento publicado: tipo={} id={}", evento.tipoEvento(), evento.id());
     } catch (JsonProcessingException | RuntimeException e) {
-      metricas.eventoPublicado(evento.tipoEvento(), "error");
+      //metricas.eventoPublicado(evento.tipoEvento(), "error");
       logger.warn("No se pudo publicar evento: tipo={} id={}: {}",
           evento.tipoEvento(), evento.id(), e.getMessage(), e);
     }
@@ -78,7 +75,7 @@ public class PublicadorEventos {
 
   private Message aMensaje(EventoQueue evento) throws JsonProcessingException {
     MessageBuilderSupport<Message> mensaje = MessageBuilder.withBody(objectMapper.writeValueAsBytes(evento))
-        .setContentType(MessageProperties.CONTENT_TYPE_JSON)
+        .setContentType(MessageProperties.BASIC.getContentType())
         .setContentEncoding("UTF-8")
         .setMessageId(evento.id())
         .setType(evento.tipoEvento());
@@ -90,4 +87,3 @@ public class PublicadorEventos {
   }
 }
 
- */
